@@ -1,0 +1,138 @@
+/* Style global */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header */
+header {
+    background-color: #0d6efd;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+/* Menu */
+nav {
+    background-color: #e9ecef;
+    border-bottom: 1px solid #ccc;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0.5rem;
+}
+
+nav ul li {
+    margin: 0 1rem;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #0d6efd;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Contenu principal */
+main, form, section {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Formulaires */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #0b5ed7;
+}
+
+/* Footer */
+footer {
+    background-color: #0d6efd;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+}
+
+/* Messages */
+p {
+    font-size: 1rem;
+}
+
+p[style*="color:red"] {
+    background: #ffe5e5;
+    border: 1px solid #ff4d4d;
+    padding: 0.5rem;
+    border-radius: 5px;
+}
+
+p[style*="color:green"] {
+    background: #e6ffed;
+    border: 1px solid #28a745;
+    padding: 0.5rem;
+    border-radius: 5px;
+}
+
+.table-style {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.table-style th,
+.table-style td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.table-style th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    color: #333;
+}
+
+.table-style tr:hover {
+    background-color: #f9f9f9;
+}

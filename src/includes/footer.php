@@ -1,0 +1,1 @@
+<footer><p>&copy; 2025 - SAE23</p></footer>
