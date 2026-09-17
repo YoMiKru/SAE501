@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['email']) || $_SESSION['statut'] !== 'admin') {
-    header("Location: /var/www/html/pages/login.php");
+    header("Location: /pages/login.php");
     exit();
 }
 
@@ -20,7 +20,7 @@ if (isset($_POST['nom'], $_POST['prix'], $_POST['bio'], $_POST['producteur'])) {
     $stmt->bindValue(':bio', $bio, SQLITE3_INTEGER);
     $stmt->execute();
 
-    header("Location: /var/www/html/pages/add_product.php?ok=1");
+    header("Location: /pages/add_product.php?ok=1");
     exit();
 }
 ?>

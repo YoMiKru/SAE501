@@ -46,7 +46,17 @@ if ($ville === '') {
 $results = $stmt->execute();
 
 while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
-    $image = !empty($row['ImagePath']) ? $row['ImagePath'] : '/var/www/html/assets/images/default.png';
+
+    $extension = pathinfo($row['ImagePath'], PATHINFO_EXTENSION);
+
+    $nomProduit = strtolower(
+        str_replace(' ', '_', $row['ProduitNom'])
+    );
+
+    $image = !empty($extension)
+        ? '/assets/images/' . $nomProduit . '.' . $extension
+        : '/assets/images/default.png';
+
     echo "<tr>";
     echo "<td>" . htmlspecialchars($row['ProduitNom']) . "</td>";
     echo "<td>" . number_format($row['PrixKilo'], 2) . " €</td>";

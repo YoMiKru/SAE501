@@ -28,7 +28,9 @@ Cette partie correspond à la version 1 : PHP et SQLite avec quelque changement 
 
 Initialement, le projet SAE501 tournait sans virtualisation (docker). Là ça change, dans cette partie la partie Web sera conteneurisé dans docker. Puisque Sqlite fonctionne sous la forme d'un simple fichier, sa conteneurisation n'est pas pertinente. 
 
-L'environnement entre tourner sans conteunerisation et avec contenneuraisation change, les redirections doivent mis a jour pour être adaptée à leur nouveau environnement et la structuration a évolué.  
+L'environnement entre tourner sans conteunerisation et avec contenneuraisation change, les redirections doivent mis a jour pour être adaptée à leur nouveau environnement et la structuration a évolué. 
+
+
 
 ## I.1.
 

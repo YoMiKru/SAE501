@@ -4,7 +4,7 @@ if (!isset($_SESSION['email']) || $_SESSION['statut'] !== 'admin') {
     exit("Accès refusé");
 }
 
-$db = new SQLite3('../BDD/produits.db');
+$db = new SQLite3('/var/www/data/produits.db');
 $id = intval($_GET['id']);
 $res = $db->query("SELECT * FROM Produit WHERE NoProduit = $id");
 $prod = $res->fetchArray(SQLITE3_ASSOC);

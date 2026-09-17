@@ -72,7 +72,7 @@ if ($_SESSION['statut'] === 'admin') {
         </thead>
         <tbody id="tableau-produits">
             <?php while ($row = $results->fetchArray(SQLITE3_ASSOC)): ?>
-                <?php $image = !empty($row['ImagePath']) ? $row['ImagePath'] : '/var/www/html/assets/images/default.png'; ?>
+                <?php $image = !empty($row['ImagePath']) ? $row['ImagePath'] : '/assets/images/default.png'; ?>
                 <tr>
                     <td><?= htmlspecialchars($row['ProduitNom']) ?></td>
                     <td><?= number_format($row['PrixKilo'], 2) ?> €</td>
@@ -92,7 +92,7 @@ if ($_SESSION['statut'] === 'admin') {
 document.getElementById("ville").addEventListener("change", function () {
     var ville = this.value;
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "filtrer.php?ville=" + encodeURIComponent(ville), true);
+    xhr.open("GET", "/pages/filter_action.php?ville=" + encodeURIComponent(ville), true);
     xhr.onload = function () {
         if (xhr.status === 200) {
             document.getElementById("tableau-produits").innerHTML = xhr.responseText;

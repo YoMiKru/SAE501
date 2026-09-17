@@ -35,7 +35,7 @@ $db = new SQLite3('/var/www/data/produits.db');
     <!-- Captcha toujours visible ici -->
     <div style="margin-top:15px;">
         <label for="captcha">Recopiez le code :</label><br />
-        <img id="captchaImage" src="/var/www/src/controllers/captcha_generator.php" alt="Captcha" style="cursor:pointer;" title="Cliquez pour rafraîchir le code" /><br />
+        <img id="captchaImage" src="/pages/captcha_generator.php" alt="Captcha" style="cursor:pointer;" title="Cliquez pour rafraîchir le code" /><br />
         <input type="text" id="captcha" name="captcha" required>
     </div>
     <!-- Bouton Modification en dehors du formulaire AJAX -->
@@ -44,10 +44,6 @@ $db = new SQLite3('/var/www/data/produits.db');
 
 <!-- Formulaire AJAX chargé ici (sans captcha) -->
 <div id="formulaire"></div>
-
-<!-- Doit y  avoir quelque chose ici... 17/09/2026-->
-
-
 
 <div id="resultat" style="margin-top:15px;"></div>
 

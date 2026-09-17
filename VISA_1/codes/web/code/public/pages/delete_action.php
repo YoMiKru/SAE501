@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['email']) || $_SESSION['statut'] !== 'admin') {
-    header("Location: /var/www/html/pages/login.php");
+    header("Location: /pages/login.php");
     exit();
 }
 
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Vérification captcha
     if (strtoupper($captchaSaisi) !== strtoupper($captchaAttendu)) {
-        header("Location: /var/www/html/pages/delete_product.php?err=Code+captcha+incorrect.+Veuillez+r%C3%A9essayer.");
+        header("Location: /pages/delete_product.php?err=Code+captcha+incorrect.+Veuillez+r%C3%A9essayer.");
         exit();
     }
 
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     unset($_SESSION['code']);
 
     if ($id === 0) {
-        header("Location: /var/www/html/pages/delete_product.php?err=Produit+non+valide.");
+        header("Location: /pages/delete_product.php?err=Produit+non+valide.");
         exit();
     }
 
@@ -30,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
 
     if ($stmt->execute()) {
-        header("Location: /var/www/html/pages/delete_product.php?msg=Produit+supprim%C3%A9+avec+succ%C3%A8s.");
+        header("Location: /pages/delete_product.php?msg=Produit+supprim%C3%A9+avec+succ%C3%A8s.");
     } else {
-        header("Location: /var/www/html/pages/delete_product.php?err=Erreur+lors+de+la+suppression.");
+        header("Location: /pages/delete_product.php?err=Erreur+lors+de+la+suppression.");
     }
     exit();
 }

@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['email']) || $_SESSION['statut'] !== 'admin') {
-    header("Location: connexion.php");
+    header("Location: /pages/login.php");
     exit();
 }
 $db = new SQLite3('/var/www/data/produits.db');
@@ -11,8 +11,8 @@ $db = new SQLite3('/var/www/data/produits.db');
 <head>
     <meta charset="UTF-8">
     <title>Ajouter un produit</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="/var/www/html/assets/js/verif_insertion.js"></script>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <script src="/assets/js/verif_insertion.js"></script>
 </head>
 <body>
 <?php include("/var/www/src/includes/header.php"); ?>
@@ -26,7 +26,7 @@ if (isset($_GET['ok'])) {
 }
 ?>
 
-<form method="POST" action="/var/wwww/src/controllers/add_action.php" onsubmit="return verifInsertion();">
+<form method="POST" action="/pages/add_action.php" onsubmit="return verifInsertion();">
     <label>Nom du produit :</label><br>
     <input type="text" name="nom" id="nom" required><br><br>
 

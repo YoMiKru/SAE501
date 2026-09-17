@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['email']) || $_SESSION['statut'] !== 'admin') {
-    header("Location: /var/www/html/pages/login.php");
+    header("Location: /pages/login.php");
     exit();
 }
 
@@ -15,7 +15,7 @@ $err = $_GET['err'] ?? '';
 <head>
     <meta charset="UTF-8">
     <title>Suppression d'un produit</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 <?php include("/var/www/src/includes/header.php"); ?>

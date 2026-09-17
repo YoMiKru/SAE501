@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['email']) || $_SESSION['statut'] !== 'admin') {
-    header("Location: /var/www/html/pages/login.php");
+    header("Location: /pages/login.php");
     exit();
 }
 
