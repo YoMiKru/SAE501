@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Connexion</title>
     <link rel="stylesheet" href="/assets/css/style.css">
-    <script src="/var/www/html/assets/js/verif_connexion.js"></script>
+    <script src="/assets/js/verif_connexion.js"></script>
 </head>
 <body>
     <h2>Connexion à l'application</h2>
@@ -16,7 +16,7 @@
         unset($_SESSION['login_error']);
     }
     ?>
-    <form method="POST" action="/src/traitement_connexion.php" onsubmit="return verifForm();">
+    <form method="POST" action="/pages/login_action.php" onsubmit="return verifForm();">
         <label>Email :</label><br>
         <input type="email" name="email" required><br><br>
 

@@ -31,7 +31,7 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
     fclose($log);
 
     //Redirection après log
-    header("Location: $redirect");
+    header("Location: /index.php");
     exit();
 }
 ?>

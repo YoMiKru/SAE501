@@ -31,7 +31,7 @@ if (!$results) {
 <head>
     <meta charset="UTF-8">
     <title>Accueil - Produits Gourmands</title>
-    <link rel="stylesheet" href="/var/www/html/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 
