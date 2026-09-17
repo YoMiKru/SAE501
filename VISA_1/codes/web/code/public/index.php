@@ -3,7 +3,7 @@ session_start();
 
 // Redirection si non connecté
 if (!isset($_SESSION['email'])) {
-    header("Location: /var/wwww/html/pages/login.php");
+    header("Location: pages/login.php");
     exit();
 }
 
