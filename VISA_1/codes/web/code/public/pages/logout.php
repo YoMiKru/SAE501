@@ -8,6 +8,6 @@ $_SESSION = array();
 session_destroy();
 
 // Rediriger vers la page de connexion
-header("Location: connexion.php");
+header("Location: /var/www/html/pages/login.php");
 exit();
 ?>

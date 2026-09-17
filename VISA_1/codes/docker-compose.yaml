@@ -1,0 +1,10 @@
+services:
+  web:
+    build: ./web
+    ports:
+    - "8080:80"
+    volumes:
+    - ./bdd/initData:/var/www/data
+    - ./web/code/public:/var/www/html
+    - ./web/code/src:/var/www/src
+    - ./logs:/var/www/logs

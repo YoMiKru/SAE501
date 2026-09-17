@@ -1,10 +1,10 @@
 <?php
 session_start();
 if (!isset($_SESSION['email']) || $_SESSION['statut'] !== 'admin') {
-    header("Location: connexion.php");
+    header("Location: /var/www/html/pages/login.php");
     exit();
 }
-$db = new SQLite3('BDD/produits.db');
+$db = new SQLite3('/var/www/data/produits.db');
 ?>
 
 <!DOCTYPE html>
@@ -13,11 +13,11 @@ $db = new SQLite3('BDD/produits.db');
     <meta charset="UTF-8" />
     <title>Modification produit</title>
     <link rel="stylesheet" href="css/style.css" />
-    <script src="js/modif_produit.js" defer></script>
+    <script src="/var/www/html/assets/js/modif_produit.js" defer></script>
 </head>
 <body>
-<?php include("includes/header.php"); ?>
-<?php include("includes/menu.php"); ?>
+<?php include("/var/www/src/includes/header.php"); ?>
+<?php include("/var/www/src/includes/menu.php"); ?>
 
 <h2>Modifier un produit</h2>
 
@@ -35,7 +35,7 @@ $db = new SQLite3('BDD/produits.db');
     <!-- Captcha toujours visible ici -->
     <div style="margin-top:15px;">
         <label for="captcha">Recopiez le code :</label><br />
-        <img id="captchaImage" src="php/image.php" alt="Captcha" style="cursor:pointer;" title="Cliquez pour rafraîchir le code" /><br />
+        <img id="captchaImage" src="/var/www/src/controllers/captcha_generator.php" alt="Captcha" style="cursor:pointer;" title="Cliquez pour rafraîchir le code" /><br />
         <input type="text" id="captcha" name="captcha" required>
     </div>
     <!-- Bouton Modification en dehors du formulaire AJAX -->
@@ -45,7 +45,7 @@ $db = new SQLite3('BDD/produits.db');
 <!-- Formulaire AJAX chargé ici (sans captcha) -->
 <div id="formulaire"></div>
 
-
+<!-- Doit y  avoir quelque chose ici... 17/09/2026-->
 
 
 
@@ -53,10 +53,10 @@ $db = new SQLite3('BDD/produits.db');
 
 <script>
 document.getElementById("captchaImage").onclick = function() {
-    this.src = 'php/image.php?' + Math.random();
+    this.src = '/var/www/src/controllers/captcha_generator.php?' + Math.random();
 };
 </script>
 
-<?php include("includes/footer.php"); ?>
+<?php include("/var/www/src/includes/footer.php"); ?>
 </body>
 </html>

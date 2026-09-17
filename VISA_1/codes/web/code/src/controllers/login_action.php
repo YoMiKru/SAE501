@@ -5,7 +5,7 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $db = new SQLite3('../BDD/comptes.sqlite');
+    $db = new SQLite3('/var/www/data/comptes.sqlite');
     $stmt = $db->prepare("SELECT * FROM utilisateurs WHERE EMAIL = :email AND PASS = :pass");
     $stmt->bindValue(':email', $email, SQLITE3_TEXT);
     $stmt->bindValue(':pass', $password, SQLITE3_TEXT);
@@ -26,7 +26,7 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
     }
 
     //Écriture du log
-    $log = fopen("../logs/connexions.log", "a");
+    $log = fopen("/var/www/logs/connexion.log", "a");
     fwrite($log, date("Y-m-d H:i:s") . " - $email - " . $_SERVER['REMOTE_ADDR'] . " - $status - Rôle : $role\n");
     fclose($log);
 

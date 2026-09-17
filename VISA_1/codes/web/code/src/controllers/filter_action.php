@@ -7,7 +7,7 @@ if (!isset($_GET['ville'])) {
 
 $ville = $_GET['ville'];
 
-$db = new SQLite3('BDD/produits.db');
+$db = new SQLite3('/var/html/data/produits.db');
 
 if ($ville === '') {
     // Pas de filtre, on affiche tous les produits
@@ -46,7 +46,7 @@ if ($ville === '') {
 $results = $stmt->execute();
 
 while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
-    $image = !empty($row['ImagePath']) ? $row['ImagePath'] : 'images/default.png';
+    $image = !empty($row['ImagePath']) ? $row['ImagePath'] : '/var/www/html/assets/images/default.png';
     echo "<tr>";
     echo "<td>" . htmlspecialchars($row['ProduitNom']) . "</td>";
     echo "<td>" . number_format($row['PrixKilo'], 2) . " €</td>";

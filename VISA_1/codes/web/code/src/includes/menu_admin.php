@@ -1,10 +1,10 @@
 <nav>
     <ul>
-        <li><a href="index.php">Accueil</a></li>
-        <li><a href="insertion.php">Ajouter un produit</a></li>
-        <li><a href="modification.php">Modifier un produit</a></li>
-        <li><a href="suppression.php">Supprimer un produit</a></li>
-        <li><a href="deconnexion.php" onclick="return confirm('Êtes-vous sûr de vouloir vous déconnecter ?');">Déconnexion</a></li>
+        <li><a href="/var/www/html/index.php">Accueil</a></li>
+        <li><a href="/var/www/html/pages/add_product.php">Ajouter un produit</a></li>
+        <li><a href="/var/www/html/pages/edit_product.php">Modifier un produit</a></li>
+        <li><a href="/var/www/html/pages/delete_product.php">Supprimer un produit</a></li>
+        <li><a href="/var/www/html/pages/logout.php" onclick="return confirm('Êtes-vous sûr de vouloir vous déconnecter ?');">Déconnexion</a></li>
     </ul>
 </nav>
 

@@ -1,7 +1,8 @@
 <?php
 session_start();
 if (!isset($_SESSION['email']) || $_SESSION['statut'] !== 'admin') {
-    exit("Accès refusé");
+    header("Location: /var/www/html/pages/login.php");
+    exit();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
@@ -15,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
     $prix = floatval($_POST['prix']);
     $bio = ($_POST['bio'] === "1") ? 1 : 0;
 
-    $db = new SQLite3('../BDD/produits.db');
+    $db = new SQLite3('/var/html/data/produits.db');
     $stmt = $db->prepare("UPDATE Produit SET Nom = :nom, PrixKilo = :prix, Bio = :bio WHERE NoProduit = :id");
     $stmt->bindValue(':nom', $nom, SQLITE3_TEXT);
     $stmt->bindValue(':prix', $prix, SQLITE3_FLOAT);

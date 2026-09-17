@@ -4,7 +4,7 @@ if (!isset($_SESSION['email']) || $_SESSION['statut'] !== 'admin') {
     header("Location: connexion.php");
     exit();
 }
-$db = new SQLite3('BDD/produits.db');
+$db = new SQLite3('/var/www/data/produits.db');
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -12,11 +12,11 @@ $db = new SQLite3('BDD/produits.db');
     <meta charset="UTF-8">
     <title>Ajouter un produit</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="js/verif_insertion.js"></script>
+    <script src="/var/www/html/assets/js/verif_insertion.js"></script>
 </head>
 <body>
-<?php include("includes/header.php"); ?>
-<?php include("includes/menu.php"); ?>
+<?php include("/var/www/src/includes/header.php"); ?>
+<?php include("/var/www/src/includes/menu.php"); ?>
 
 <h2>Ajouter un nouveau produit</h2>
 
@@ -26,7 +26,7 @@ if (isset($_GET['ok'])) {
 }
 ?>
 
-<form method="POST" action="php/traitement_insertion.php" onsubmit="return verifInsertion();">
+<form method="POST" action="/var/wwww/src/controllers/add_action.php" onsubmit="return verifInsertion();">
     <label>Nom du produit :</label><br>
     <input type="text" name="nom" id="nom" required><br><br>
 
@@ -52,6 +52,6 @@ if (isset($_GET['ok'])) {
     <button type="submit">Ajouter</button>
 </form>
 
-<?php include("includes/footer.php"); ?>
+<?php include("/var/www/src/includes/footer.php"); ?>
 </body>
 </html>

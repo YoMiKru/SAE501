@@ -2,11 +2,11 @@
 session_start();
 
 if (!isset($_SESSION['email']) || $_SESSION['statut'] !== 'admin') {
-    header("Location: connexion.php");
+    header("Location: /var/www/html/pages/login.php");
     exit();
 }
 
-$db = new SQLite3('BDD/produits.db');
+$db = new SQLite3('/var/www/data/produits.db');
 $msg = $_GET['msg'] ?? '';
 $err = $_GET['err'] ?? '';
 ?>
@@ -14,21 +14,21 @@ $err = $_GET['err'] ?? '';
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Suppression d’un produit</title>
+    <title>Suppression d'un produit</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<?php include("includes/header.php"); ?>
-<?php include("includes/menu.php"); ?>
+<?php include("/var/www/src/includes/header.php"); ?>
+<?php include("/var/www/src/includes/menu.php"); ?>
 
-<h2>Suppression d’un produit</h2>
+<h2>Suppression d'un produit</h2>
 
 <?php
 if ($msg) echo "<p style='color:green;'>".htmlspecialchars($msg)."</p>";
 if ($err) echo "<p style='color:red;'>".htmlspecialchars($err)."</p>";
 ?>
 
-<form method="POST" action="php/traitement_suppression.php">
+<form method="POST" action="/var/wwww/src/controllers/delete_action.php">
     <label>Produit à supprimer :</label><br>
     <select name="produit" required>
         <option value="">-- Sélectionner --</option>
@@ -43,15 +43,15 @@ if ($err) echo "<p style='color:red;'>".htmlspecialchars($err)."</p>";
     <!-- Captcha -->
     <div style="margin-top:15px;">
         <label for="captcha">Recopiez le code :</label><br />
-        <img id="captchaImage" src="php/image.php" alt="Captcha"
+        <img id="captchaImage" src="/var/www/src/controllers/captcha_generator.php" alt="Captcha"
              style="cursor:pointer;" title="Cliquez pour rafraîchir"
-             onclick="this.src='php/image.php?' + Date.now();" /><br />
+             onclick="this.src='/var/www/src/controllers/captcha_generator.php?' + Date.now();" /><br />
         <input type="text" id="captcha" name="captcha" required>
     </div><br>
 
     <button type="submit">Supprimer</button>
 </form>
 
-<?php include("includes/footer.php"); ?>
+<?php include("/var/www/src/includes/footer.php"); ?>
 </body>
 </html>

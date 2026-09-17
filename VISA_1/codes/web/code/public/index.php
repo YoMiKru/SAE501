@@ -3,11 +3,11 @@ session_start();
 
 // Redirection si non connecté
 if (!isset($_SESSION['email'])) {
-    header("Location: pages/connexion.php");
+    header("Location: /var/wwww/html/pages/login.php");
     exit();
 }
 
-$db = new SQLite3('..\..\..\..\bdd\initData\produits.db');
+$db = new SQLite3('/var/www/data/produits.db');
 
 $results = $db->query("
     SELECT 
@@ -31,16 +31,18 @@ if (!$results) {
 <head>
     <meta charset="UTF-8">
     <title>Accueil - Produits Gourmands</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/var/www/html/assets/css/style.css">
 </head>
 <body>
-<?php include("includes/header.php"); ?>
 
-<?php
+
+<?php 
+include("/var/www/src/includes/header.php"); 
+
 if ($_SESSION['statut'] === 'admin') {
-    include("includes/menu_admin.php");
+    include("/var/www/src/includes/menu_admin.php");
 } else {
-    include("includes/menu_user.php");
+    include("/var/www/src/includes/menu_user.php");
 }
 ?>
 
@@ -70,7 +72,7 @@ if ($_SESSION['statut'] === 'admin') {
         </thead>
         <tbody id="tableau-produits">
             <?php while ($row = $results->fetchArray(SQLITE3_ASSOC)): ?>
-                <?php $image = !empty($row['ImagePath']) ? $row['ImagePath'] : 'images/default.png'; ?>
+                <?php $image = !empty($row['ImagePath']) ? $row['ImagePath'] : '/var/www/html/assets/images/default.png'; ?>
                 <tr>
                     <td><?= htmlspecialchars($row['ProduitNom']) ?></td>
                     <td><?= number_format($row['PrixKilo'], 2) ?> €</td>
@@ -84,7 +86,7 @@ if ($_SESSION['statut'] === 'admin') {
     </table>
 </main>
 
-<?php include("includes/footer.php"); ?>
+<?php include("/var/www/src/includes/footer.php"); ?>
 
 <script>
 document.getElementById("ville").addEventListener("change", function () {
