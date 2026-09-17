@@ -12,7 +12,7 @@ $db = new SQLite3('/var/www/data/produits.db');
 <head>
     <meta charset="UTF-8" />
     <title>Modification produit</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
     <script src="/var/www/html/assets/js/modif_produit.js" defer></script>
 </head>
 <body>
@@ -49,7 +49,7 @@ $db = new SQLite3('/var/www/data/produits.db');
 
 <script>
 document.getElementById("captchaImage").onclick = function() {
-    this.src = '/var/www/src/controllers/captcha_generator.php?' + Math.random();
+    this.src = '/pages/captcha_generator.php?' + Math.random();
 };
 </script>
 

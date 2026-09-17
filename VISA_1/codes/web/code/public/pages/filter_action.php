@@ -7,7 +7,7 @@ if (!isset($_GET['ville'])) {
 
 $ville = $_GET['ville'];
 
-$db = new SQLite3('/var/html/data/produits.db');
+$db = new SQLite3('/var/wwww/data/produits.db');
 
 if ($ville === '') {
     // Pas de filtre, on affiche tous les produits

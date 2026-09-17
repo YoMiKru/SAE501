@@ -43,9 +43,9 @@ if ($err) echo "<p style='color:red;'>".htmlspecialchars($err)."</p>";
     <!-- Captcha -->
     <div style="margin-top:15px;">
         <label for="captcha">Recopiez le code :</label><br />
-        <img id="captchaImage" src="/var/www/src/controllers/captcha_generator.php" alt="Captcha"
+        <img id="captchaImage" src="/pages/captcha_generator.php" alt="Captcha"
              style="cursor:pointer;" title="Cliquez pour rafraîchir"
-             onclick="this.src='/var/www/src/controllers/captcha_generator.php?' + Date.now();" /><br />
+             onclick="this.src='/pages/captcha_generator.php?' + Date.now();" /><br />
         <input type="text" id="captcha" name="captcha" required>
     </div><br>
 
