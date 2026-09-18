@@ -18,7 +18,7 @@ if (
     !isset($_POST['bio']) ||
     !isset($_POST['producteur'])
 ) {
-    header("Location: /pages/add.php?error=Données manquantes");
+    header("Location: /pages/add_product.php?error=Données manquantes");
     exit();
 }
 
@@ -34,7 +34,7 @@ $producteur = $_POST['producteur'];
  */
 
 if ($nom === '') {
-    header("Location: /pages/add.php?error=Nom du produit invalide");
+    header("Location: /pages/add_product.php?error=Nom du produit invalide");
     exit();
 }
 
@@ -52,19 +52,35 @@ $db = new SQLite3('/var/www/data/produits.db');
 
 if ($producteur === 'nouveau') {
 
+    /*
+     * Vérification des informations du nouveau producteur
+     */
+
     if (
         !isset($_POST['producteur_nom']) ||
-        !isset($_POST['producteur_prenom'])
+        !isset($_POST['producteur_prenom']) ||
+        !isset($_POST['producteur_ville'])
     ) {
-        header("Location: /pages/add.php?error=Informations du producteur manquantes");
+        header("Location: /pages/add_product.php?error=Informations du producteur manquantes");
         exit();
     }
 
+
     $nomProducteur = trim($_POST['producteur_nom']);
     $prenomProducteur = trim($_POST['producteur_prenom']);
+    $villeProducteur = trim($_POST['producteur_ville']);
 
-    if ($nomProducteur === '' || $prenomProducteur === '') {
-        header("Location: /pages/add.php?error=Nom ou prénom du producteur invalide");
+
+    /*
+     * Vérification des informations
+     */
+
+    if (
+        $nomProducteur === '' ||
+        $prenomProducteur === '' ||
+        $villeProducteur === ''
+    ) {
+        header("Location: /pages/add_product.php?error=Nom, prénom ou ville du producteur invalide");
         exit();
     }
 
@@ -74,23 +90,25 @@ if ($producteur === 'nouveau') {
      */
 
     $stmt = $db->prepare(
-        "INSERT INTO Producteur (Nom, Prenom)
-         VALUES (:nom, :prenom)"
+        "INSERT INTO Producteur (Nom, Prenom, Ville)
+         VALUES (:nom, :prenom, :ville)"
     );
 
     $stmt->bindValue(':nom', $nomProducteur, SQLITE3_TEXT);
     $stmt->bindValue(':prenom', $prenomProducteur, SQLITE3_TEXT);
+    $stmt->bindValue(':ville', $villeProducteur, SQLITE3_TEXT);
 
     $result = $stmt->execute();
 
+
     if (!$result) {
-        header("Location: /pages/add.php?error=Erreur lors de l'ajout du producteur");
+        header("Location: /pages/add_product.php?error=Erreur lors de l'ajout du producteur");
         exit();
     }
 
 
     /*
-     * Récupération du numéro du producteur
+     * Récupération du numéro du producteur créé
      */
 
     $producteur = $db->lastInsertRowID();
@@ -108,20 +126,24 @@ if (
     $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE
 ) {
 
+    /*
+     * Vérification de l'upload
+     */
+
     if ($_FILES['image']['error'] !== UPLOAD_ERR_OK) {
-        header("Location: /pages/add.php?error=Erreur lors de l'envoi de l'image");
+        header("Location: /pages/add_product.php?error=Erreur lors de l'envoi de l'image");
         exit();
     }
 
 
     /*
-     * Vérification du type réel de l'image
+     * Vérification que le fichier est réellement une image
      */
 
     $imageInfo = getimagesize($_FILES['image']['tmp_name']);
 
     if ($imageInfo === false) {
-        header("Location: /pages/add.php?error=Le fichier envoyé n'est pas une image");
+        header("Location: /pages/add_product.php?error=Le fichier envoyé n'est pas une image");
         exit();
     }
 
@@ -142,17 +164,21 @@ if (
         pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION)
     );
 
+
     if (!in_array($extension, $extensionsAutorisees, true)) {
-        header("Location: /pages/add.php?error=Format d'image non autorisé");
+        header("Location: /pages/add_product.php?error=Format d'image non autorisé");
         exit();
     }
 
 
     /*
-     * Nettoyage du nom du produit
+     * Création du nom de fichier à partir du nom du produit
      *
      * Exemple :
-     * "Pomme rouge" -> "pomme_rouge"
+     *
+     * Pomme rouge
+     * devient
+     * pomme_rouge.png
      */
 
     $nomImage = iconv(
@@ -162,18 +188,24 @@ if (
     );
 
     $nomImage = strtolower($nomImage);
-    $nomImage = preg_replace('/[^a-z0-9]+/', '_', $nomImage);
+
+    $nomImage = preg_replace(
+        '/[^a-z0-9]+/',
+        '_',
+        $nomImage
+    );
+
     $nomImage = trim($nomImage, '_');
 
 
     if ($nomImage === '') {
-        header("Location: /pages/add.php?error=Nom de produit invalide pour le nom de l'image");
+        header("Location: /pages/add_product.php?error=Nom de produit invalide pour le nom de l'image");
         exit();
     }
 
 
     /*
-     * Chemin réel sur le serveur
+     * Dossier réel de stockage
      */
 
     $dossierImage = '/var/www/html/assets/images/';
@@ -205,7 +237,7 @@ if (
         $_FILES['image']['tmp_name'],
         $cheminReel
     )) {
-        header("Location: /pages/add.php?error=Impossible de sauvegarder l'image");
+        header("Location: /pages/add_product.php?error=Impossible de sauvegarder l'image");
         exit();
     }
 
@@ -219,7 +251,7 @@ if (
 
 
 /*
- * Ajout du produit
+ * Ajout du produit dans la BDD
  */
 
 $stmt = $db->prepare(
@@ -229,10 +261,12 @@ $stmt = $db->prepare(
         (:nom, :prix, :bio, :producteur, :image)"
 );
 
+
 $stmt->bindValue(':nom', $nom, SQLITE3_TEXT);
 $stmt->bindValue(':prix', $prix, SQLITE3_FLOAT);
 $stmt->bindValue(':bio', $bio, SQLITE3_INTEGER);
 $stmt->bindValue(':producteur', intval($producteur), SQLITE3_INTEGER);
+
 
 if ($imagePath !== null) {
     $stmt->bindValue(':image', $imagePath, SQLITE3_TEXT);
@@ -253,7 +287,7 @@ if (!$result) {
 $db->close();
 
 
-header("Location: /pages/add.php?ok=1");
+header("Location: /pages/add_product.php?ok=1");
 exit();
 
 ?>

@@ -64,102 +64,103 @@ $db = new SQLite3('/var/www/data/produits.db');
 <main>
     <h2>Ajouter un nouveau produit</h2>
 
-```
-<?php
-if (isset($_GET['ok'])) {
-    echo "<p style='color:green;'>Produit ajouté avec succès.</p>";
-}
+    <?php
+    if (isset($_GET['ok'])) {
+        echo "<p style='color:green;'>Produit ajouté avec succès.</p>";
+    }
 
-if (isset($_GET['error'])) {
-    echo "<p style='color:red;'>" . htmlspecialchars($_GET['error']) . "</p>";
-}
-?>
+    if (isset($_GET['error'])) {
+        echo "<p style='color:red;'>" . htmlspecialchars($_GET['error']) . "</p>";
+    }
+    ?>
 
-<form
-    method="POST"
-    action="/pages/add_action.php"
-    enctype="multipart/form-data"
-    onsubmit="return verifInsertion();"
->
+    <form
+        method="POST"
+        action="/pages/add_action.php"
+        enctype="multipart/form-data"
+        onsubmit="return verifInsertion();"
+    >
 
-    <label for="nom">Nom du produit :</label><br>
-    <input type="text" name="nom" id="nom" required>
-    <br><br>
-
-
-    <label for="prix">Prix au kilo (€) :</label><br>
-    <input type="number" name="prix" id="prix" step="0.01" min="0" required>
-    <br><br>
-
-
-    <label for="bio">Biologique :</label><br>
-    <select name="bio" id="bio" required>
-        <option value="1">Oui</option>
-        <option value="0">Non</option>
-    </select>
-    <br><br>
-
-
-    <label for="producteur">Producteur :</label><br>
-
-    <select name="producteur" id="producteur" required>
-        <option value="">-- Sélectionner un producteur --</option>
-
-        <?php
-        $res = $db->query(
-            "SELECT NoProducteur, Nom, Prenom
-             FROM Producteur
-             ORDER BY Nom, Prenom"
-        );
-
-        while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
-            echo '<option value="' . htmlspecialchars($row['NoProducteur']) . '">'
-                . htmlspecialchars($row['Nom'] . ' ' . $row['Prenom'])
-                . '</option>';
-        }
-        ?>
-
-        <option value="nouveau">+ Ajouter un nouveau producteur</option>
-    </select>
-
-
-    <div id="nouveau-producteur" class="producteur-nouveau">
-
-        <label for="producteur_nom">Nom du producteur :</label><br>
-        <input type="text" name="producteur_nom" id="producteur_nom">
+        <label for="nom">Nom du produit :</label><br>
+        <input type="text" name="nom" id="nom" required>
         <br><br>
 
-        <label for="producteur_prenom">Prénom du producteur :</label><br>
-        <input type="text" name="producteur_prenom" id="producteur_prenom">
+
+        <label for="prix">Prix au kilo (€) :</label><br>
+        <input type="number" name="prix" id="prix" step="0.01" min="0" required>
         <br><br>
 
-    </div>
+
+        <label for="bio">Biologique :</label><br>
+        <select name="bio" id="bio" required>
+            <option value="1">Oui</option>
+            <option value="0">Non</option>
+        </select>
+        <br>
+        <br>
+
+        <label for="producteur">Producteur :</label><br>
+
+        <select name="producteur" id="producteur" required>
+            <option value="">-- Sélectionner un producteur --</option>
+
+            <?php
+            $res = $db->query(
+                "SELECT NoProducteur, Nom, Prenom
+                FROM Producteur
+                ORDER BY Nom, Prenom"
+            );
+
+            while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+                echo '<option value="' . htmlspecialchars($row['NoProducteur']) . '">'
+                    . htmlspecialchars($row['Nom'] . ' ' . $row['Prenom'])
+                    . '</option>';
+            }
+            ?>
+
+            <option value="nouveau">+ Ajouter un nouveau producteur</option>
+        </select>
 
 
-    <label>Image du produit :</label><br>
+            <div id="nouveau-producteur" class="producteur-nouveau">
 
-    <div class="drop-zone" id="drop-zone">
-        <span id="drop-text">
-            Glissez-déposez une image ici<br>
-            ou cliquez pour sélectionner un fichier
-        </span>
+                <label for="producteur_nom">Nom du producteur :</label><br>
+                <input type="text" name="producteur_nom" id="producteur_nom">
+                <br><br>
 
-        <input
-            type="file"
-            name="image"
-            id="image"
-            accept="image/png,image/jpeg,image/webp,image/gif"
-        >
+                <label for="producteur_prenom">Prénom du producteur :</label><br>
+                <input type="text" name="producteur_prenom" id="producteur_prenom">
+                <br><br>
 
-        <img id="image-preview" alt="Aperçu de l'image">
-    </div>
+                <label for="producteur_ville">Ville :</label><br>
+                <input type="text" name="producteur_ville" id="producteur_ville">
+                <br><br>
+
+            </div>
 
 
-    <button type="submit">Ajouter</button>
+        <label>Image du produit :</label><br>
 
-</form>
-```
+        <div class="drop-zone" id="drop-zone">
+            <span id="drop-text">
+                Glissez-déposez une image ici<br>
+                ou cliquez pour sélectionner un fichier
+            </span>
 
+            <input
+                type="file"
+                name="image"
+                id="image"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+            >
+
+            <img id="image-preview" alt="Aperçu de l'image">
+        </div>
+
+
+        <button type="submit">Ajouter</button>
+
+    </form>
 </main>
 
 <?php include("/var/www/src/includes/footer.php"); ?>
@@ -169,6 +170,7 @@ const producteurSelect = document.getElementById("producteur");
 const nouveauProducteur = document.getElementById("nouveau-producteur");
 const nomProducteur = document.getElementById("producteur_nom");
 const prenomProducteur = document.getElementById("producteur_prenom");
+const villeProducteur = document.getElementById("producteur_ville");
 
 producteurSelect.addEventListener("change", function () {
 
@@ -177,14 +179,16 @@ producteurSelect.addEventListener("change", function () {
 
         nomProducteur.required = true;
         prenomProducteur.required = true;
+        villeProducteur.required = true;
+
     } else {
         nouveauProducteur.style.display = "none";
 
         nomProducteur.required = false;
         prenomProducteur.required = false;
+        villeProducteur.required = false;
     }
 });
-
 
 const dropZone = document.getElementById("drop-zone");
 const imageInput = document.getElementById("image");
