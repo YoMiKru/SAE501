@@ -29,7 +29,7 @@ $err = $_GET['err'] ?? '';
     if ($err) echo "<p style='color:red;'>".htmlspecialchars($err)."</p>";
     ?>
 
-    <form method="POST" action="/var/wwww/src/controllers/delete_action.php">
+    <form method="POST" action="/pages/delete_action.php">
         <label>Produit à supprimer :</label><br>
         <select name="produit" required>
             <option value="">-- Sélectionner --</option>

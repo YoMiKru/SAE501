@@ -18,7 +18,6 @@ $db = new SQLite3('/var/www/data/produits.db');
     <link rel="stylesheet" href="/assets/css/style.css">
     <script src="/assets/js/verif_insertion.js"></script>
 
-```
 <style>
     .drop-zone {
         width: 100%;
@@ -53,7 +52,6 @@ $db = new SQLite3('/var/www/data/produits.db');
         margin-top: 15px;
     }
 </style>
-```
 
 </head>
 

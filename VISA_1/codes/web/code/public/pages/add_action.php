@@ -245,7 +245,7 @@ $result = $stmt->execute();
 
 
 if (!$result) {
-    header("Location: /pages/add.php?error=Erreur lors de l'ajout du produit");
+    header("Location: /pages/add_product.php?error=Erreur lors de l'ajout du produit");
     exit();
 }
 
