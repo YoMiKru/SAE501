@@ -224,7 +224,7 @@ if (
 
 $stmt = $db->prepare(
     "INSERT INTO Produit
-        (ProduitNom, PrixKilo, Bio, NoProducteur, ImagePath)
+        (Nom, PrixKilo, Bio, NoProducteur, ImagePath)
      VALUES
         (:nom, :prix, :bio, :producteur, :image)"
 );
