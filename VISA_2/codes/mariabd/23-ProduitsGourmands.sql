@@ -1,6 +1,4 @@
 -- on modifie le scipt SQL pour une seule "bdd" mergant comptes.sqlite et produit.db
-
-
 CREATE DATABASE IF NOT EXISTS BDD_VISA2;
 
 USE BDD_VISA2;
