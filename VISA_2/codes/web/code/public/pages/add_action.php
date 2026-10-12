@@ -43,7 +43,8 @@ if ($nom === '') {
  * Connexion à la BDD
  */
 
-$db = new SQLite3('/var/www/data/produits.db');
+require_once '/var/www/src/includes/database.php';
+$db = getDatabase();
 
 
 /*
@@ -94,9 +95,9 @@ if ($producteur === 'nouveau') {
          VALUES (:nom, :prenom, :ville)"
     );
 
-    $stmt->bindValue(':nom', $nomProducteur, SQLITE3_TEXT);
-    $stmt->bindValue(':prenom', $prenomProducteur, SQLITE3_TEXT);
-    $stmt->bindValue(':ville', $villeProducteur, SQLITE3_TEXT);
+    $stmt->bindValue(':nom', $nomProducteur, PDO::PARAM_STR);
+    $stmt->bindValue(':prenom', $prenomProducteur, PDO::PARAM_STR);
+    $stmt->bindValue(':ville', $villeProducteur, PDO::PARAM_STR);
 
     $result = $stmt->execute();
 
@@ -111,7 +112,7 @@ if ($producteur === 'nouveau') {
      * Récupération du numéro du producteur créé
      */
 
-    $producteur = $db->lastInsertRowID();
+    $producteur = $db->lastInsertId();
 }
 
 
@@ -262,16 +263,16 @@ $stmt = $db->prepare(
 );
 
 
-$stmt->bindValue(':nom', $nom, SQLITE3_TEXT);
-$stmt->bindValue(':prix', $prix, SQLITE3_FLOAT);
-$stmt->bindValue(':bio', $bio, SQLITE3_INTEGER);
-$stmt->bindValue(':producteur', intval($producteur), SQLITE3_INTEGER);
+$stmt->bindValue(':nom', $nom, PDO::PARAM_STR);
+$stmt->bindValue(':prix', $prix, PDO::PARAM_STR);
+$stmt->bindValue(':bio', $bio, PDO::PARAM_INT);
+$stmt->bindValue(':producteur', intval($producteur), PDO::PARAM_INT);
 
 
 if ($imagePath !== null) {
-    $stmt->bindValue(':image', $imagePath, SQLITE3_TEXT);
+    $stmt->bindValue(':image', $imagePath, PDO::PARAM_STR);
 } else {
-    $stmt->bindValue(':image', null, SQLITE3_NULL);
+    $stmt->bindValue(':image', null, PDO::PARAM_NULL);
 }
 
 
@@ -284,7 +285,7 @@ if (!$result) {
 }
 
 
-$db->close();
+
 
 
 header("Location: /pages/add_product.php?ok=1");

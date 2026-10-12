@@ -4,10 +4,11 @@ if (!isset($_SESSION['email']) || $_SESSION['statut'] !== 'admin') {
     exit("Accès refusé");
 }
 
-$db = new SQLite3('/var/www/data/produits.db');
+require_once '/var/www/src/includes/database.php';
+$db = getDatabase();
 $id = intval($_GET['id']);
 $res = $db->query("SELECT * FROM Produit WHERE NoProduit = $id");
-$prod = $res->fetchArray(SQLITE3_ASSOC);
+$prod = $res->fetch(PDO::FETCH_ASSOC);
 
 if (!$prod) {
     exit("<p>Produit introuvable</p>");

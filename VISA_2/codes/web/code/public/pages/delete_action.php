@@ -25,9 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $db = new SQLite3('/var/www/data/produits.db');
+    require_once '/var/www/src/includes/database.php';
+$db = getDatabase();
     $stmt = $db->prepare("DELETE FROM Produit WHERE NoProduit = :id");
-    $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
 
     if ($stmt->execute()) {
         header("Location: /pages/delete_product.php?msg=Produit+supprim%C3%A9+avec+succ%C3%A8s.");

@@ -6,7 +6,8 @@ if (!isset($_SESSION['email']) || $_SESSION['statut'] !== 'admin') {
     exit();
 }
 
-$db = new SQLite3('/var/www/data/produits.db');
+require_once '/var/www/src/includes/database.php';
+$db = getDatabase();
 $msg = $_GET['msg'] ?? '';
 $err = $_GET['err'] ?? '';
 ?>
@@ -25,8 +26,8 @@ $err = $_GET['err'] ?? '';
     <h2>Suppression d'un produit</h2>
 
     <?php
-    if ($msg) echo "<p style='color:green;'>".htmlspecialchars($msg)."</p>";
-    if ($err) echo "<p style='color:red;'>".htmlspecialchars($err)."</p>";
+    if ($msg) echo "<p class=\"message-success\">".htmlspecialchars($msg)."</p>";
+    if ($err) echo "<p class=\"message-error\">".htmlspecialchars($err)."</p>";
     ?>
 
     <form method="POST" action="/pages/delete_action.php">
@@ -35,17 +36,17 @@ $err = $_GET['err'] ?? '';
             <option value="">-- Sélectionner --</option>
             <?php
             $res = $db->query("SELECT NoProduit, Nom FROM Produit");
-            while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+            while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
                 echo "<option value='" . htmlspecialchars($row['NoProduit']) . "'>" . htmlspecialchars($row['Nom']) . "</option>";
             }
             ?>
         </select><br><br>
 
         <!-- Captcha -->
-        <div style="margin-top:15px;">
+        <div class="captcha-container">
             <label for="captcha">Recopiez le code :</label><br />
             <img id="captchaImage" src="/pages/captcha_generator.php" alt="Captcha"
-                style="cursor:pointer;" title="Cliquez pour rafraîchir"
+                class="captcha-image" title="Cliquez pour rafraîchir"
                 onclick="this.src='/pages/captcha_generator.php?' + Date.now();" /><br />
             <input type="text" id="captcha" name="captcha" required>
         </div><br>

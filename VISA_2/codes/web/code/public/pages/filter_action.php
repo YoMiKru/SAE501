@@ -7,7 +7,8 @@ if (!isset($_GET['ville'])) {
 
 $ville = $_GET['ville'];
 
-$db = new SQLite3('/var/www/data/produits.db');
+require_once '/var/www/src/includes/database.php';
+$db = getDatabase();
 
 if ($ville === '') {
     // Pas de filtre, on affiche tous les produits
@@ -40,12 +41,12 @@ if ($ville === '') {
         WHERE Ville = :ville
     ";
     $stmt = $db->prepare($query);
-    $stmt->bindValue(':ville', $ville, SQLITE3_TEXT);
+    $stmt->bindValue(':ville', $ville, PDO::PARAM_STR);
 }
 
-$results = $stmt->execute();
+$stmt->execute();
 
-while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
     $extension = pathinfo($row['ImagePath'], PATHINFO_EXTENSION);
 

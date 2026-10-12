@@ -9,6 +9,13 @@ services:
       - ./web/code/src:/var/www/src
       - ./logs:/var/www/logs
 
+    environment:
+      DB_HOST: mariadb
+      DB_PORT: "3306"
+      DB_NAME: BDD_VISA2
+      DB_USER: mariadb_user
+      DB_PASSWORD: "05102006"
+
     depends_on:
       - mariadb
 

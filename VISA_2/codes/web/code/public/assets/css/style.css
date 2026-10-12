@@ -276,3 +276,10 @@ footer {
         overflow-x: auto;
     }
 }
+
+/* Classes extraites des styles auparavant intégrés au HTML */
+.message-success { color: green; }
+.message-error { color: red; }
+.captcha-image { cursor: pointer; }
+.captcha-container { margin-top: 15px; }
+.result-container { margin-top: 15px; }
