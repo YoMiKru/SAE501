@@ -1,0 +1,1 @@
+<footer><p>&copy; 2025 - Projet d'origine : SAE23 - Projet Repris : SAE501 - 2027</p></footer>

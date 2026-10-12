@@ -4,15 +4,17 @@
 
 <span style="font-size: 1.6em; color: gray;"><em>Compte rendu</em></span>
 
-> Faire la partie consacrée aux objectifs et à la problématique professionnelle.
->
-> Faire une description détaillée et non générique.
->
-> Expliquer ce que nous avons réalisé lors de la SAE23.
+## Contexte
+
+Le projet de SAE501 reprend le projet de SAE23 fait en seconde année de BUT R&T. 
+
+Le projet consistait a créer un site web avec une base de donnée sur différents thèmes pour chaque étudiant. J'ai eu le thème des "Produits Gourmand" et donc la base de donnée SQLite correspondant. 
+
+Le site web qu'il fallait donc faire est la page web vitrine du magazin "Produit Gourmand". 
 
 ## Partie 0 : Configuration de la VM et installation des dépendances nécessaires
 
-La VM fonctionne sous Debian 12, sur le serveur Proxmox privé de l'IUT.
+La VM fonctionne sous Debian 12, sur un serveur Proxmox privé, extérieur de l'IUT.
 
 L'accès à distance via SSH a été activé et **sécurisé** pour l'utilisateur `root`.
 
@@ -26,6 +28,16 @@ Pour l'accès au site, le fonctionnement est le suivant :
   - Le site est sécurisé et dispose d'un certificat délivré par Let's Encrypt.
 - Chaque VISA disposera de son propre fichier `docker-compose.yaml`.
 - Chaque VISA utilisera le VISA précédent comme base de départ.
+
+L'intégralité du projet est disponible sur Github : https://github.com/YoMiKru/SAE501
+
+## Partie VISA_0
+
+Pour la parti du VISA_0, on nous était demandé de rendre de nouveau fonctionnelle le site comme on l'avait fait lors du projet SAE23. 
+
+Par contre, il était très complexe de remettre à 0 la configuration qu'il y avait. On avait utilisé l'application XAMPP et apporté des modifications assez importante dans sa configuration. 
+
+J'ai préféré, directement faire la mise au propre et passer au VISA_1.
 
 ## Partie I : Réutilisation du projet SAE23 et mise au propre
 
@@ -84,7 +96,37 @@ VISA_1/
 
 Cette architecture constituera la nouvelle norme d'organisation de l'arborescence pour l'ensemble du projet SAE501.
 
-## Configuration de Docker
+Les changements dans le code sont les redirections. Exemple : 
+
+```php
+<?php
+if (!isset($_SESSION['email'])) {
+    header("Location: pages/login.php");
+    exit();
+}
+?>
+```
+
+Précédemmnent, les redirections étaient adaptées dans le cas où tout les fichiers .php était dans le même dossier et interprété par XAMPP sur Windows. 
+
+## I.2 Mécanisme du déployement
+
+Comme dit plus tôt, le site web est hébergé sur une VM privée tournant le système d'exploitation utilisé à l'IUT : Debian 12. 
+
+Le déployement sur serveur se fait en deux étapes : 
+- utilisation de Github comme sauvegarder et serveur de "synchronisation"
+- clonage depuis Github sur la VM. 
+
+Ainsi, les données et, surtout, le développement du service ne peut être perdu. Il y a 3 copie à 3 locations différentes : 
+- sur l'ordinateur de développement (PC personnel),
+- sur Github (lien à la fin de Partie 0),
+- sur la VM du serveur Proxmox privée. 
+
+Sur la VM du serveur, on ordonne un ``git clone`` du Repo Github correspondant et on enchaine les ``git pull`` après chaque commit du projet. 
+
+On vérifie le bon fonctionnement via le lien **sae501.yomikr.fr** qui nous redirige au site web du projet. On peut ainsi tester les différentes fonctionnalitées.  
+
+## I.3 Configuration de Docker
 
 ### Dockerfile pour le service Web
 
@@ -137,3 +179,11 @@ services:
       - ./web/code/src:/var/www/src
       - ./logs:/var/www/logs
 ```
+
+## 1.4 Conclusion du VISA_1
+
+Dans cette partie, on a vu le déployement, la mise en place et le bon fonctionnemeent du service. 
+
+On a vu comment mettre en place un service en faisant de la conteuneurisation pour la partie Web du projet tout en maintenant les fonctionnalité avec la "communication" avec la base de données. 
+
+La prochaine étape du projet, le VISA_2, consiste à remplacer la base de donnée SQLite par la base de donnée MariaDB. 

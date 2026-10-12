@@ -1,0 +1,1 @@
+<header><h1>Bienvenue sur Produits Gourmands</h1><p>Connecté en tant que: <?php echo $_SESSION['email']; ?> (<?php echo $_SESSION['statut']; ?>)</p></header>
