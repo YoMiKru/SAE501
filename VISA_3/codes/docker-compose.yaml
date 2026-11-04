@@ -48,8 +48,7 @@ services:
   api_auth:
     build: ./api_auth
     container_name: api_auth
-    ports:
-      - "8000:8000"
+    restart: unless-stopped
     depends_on:
       - mariadb
     volumes:
@@ -61,14 +60,16 @@ services:
   api_products:
     build: ./api_products
     container_name: api_products
-    ports:
-      - "8001:8001"
+    restart: unless-stopped
     depends_on:
       - mariadb
     volumes:
       - ./api_products/app:/app
     networks:
       - app_network
+
+  # Pour les deux APIs, on ne les exposes pas sur le port de l'hôte, 
+  # elles sont accessibles uniquement via le réseau interne du docker-compose.
 
 networks:
   app_network:
