@@ -44,27 +44,29 @@ services:
     networks:
       - app_network
 
+  ############################################
   api_auth:
     build: ./api_auth
+    container_name: api_auth
     ports:
       - "8000:8000"
-    environment:
-      - FLASK_APP=app.py
-      - FLASK_ENV=development
     depends_on:
       - mariadb
+    volumes:
+      - ./api_auth/app:/app
     networks:
       - app_network
 
+  ############################################
   api_products:
     build: ./api_products
+    container_name: api_products
     ports:
       - "8001:8001"
-    environment:
-      - FLASK_APP=app.py
-      - FLASK_ENV=development
     depends_on:
       - mariadb
+    volumes:
+      - ./api_products/app:/app
     networks:
       - app_network
 
