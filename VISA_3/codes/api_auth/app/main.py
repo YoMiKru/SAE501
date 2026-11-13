@@ -1,5 +1,5 @@
 import fastapi
-import mariadb
+import pymysql
 import pydantic
 
 app = fastapi.FastAPI()
