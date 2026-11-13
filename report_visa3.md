@@ -187,3 +187,7 @@ On a donc la confirmation que la connexion API fonctionne. La prochaine étape e
 
 ### III.3. Configuration de l'API d'authentification
 
+**INFORMATION : J'ai comme habitude de commenter dans mes codes, la plupart du temps je mélange l'anglais et le français. Les commentaires en anglais sont aussi ajoutées à la main :)**
+
+Avant de rentrer dans le vif du sujet, on va ajouter une librairie à installer dans les services API. Pour que les API Python puissent communiquer avec la base de donnée MariaDB, on va utiliser la librairie correspondante : mariadb. On l'ajoute donc dans le fichier requierments.txt
+
