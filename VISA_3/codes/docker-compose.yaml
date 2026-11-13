@@ -49,6 +49,14 @@ services:
     build: ./api_auth
     container_name: api_auth
     restart: unless-stopped
+    
+    environment:
+      DB_HOST: mariadb
+      DB_PORT: "3306"
+      DB_NAME: BDD_VISA3
+      DB_USER: mariadb_user
+      DB_PASSWORD: "05102006"
+
     depends_on:
       - mariadb
     volumes:
@@ -61,6 +69,14 @@ services:
     build: ./api_products
     container_name: api_products
     restart: unless-stopped
+
+    environment:
+      DB_HOST: mariadb
+      DB_PORT: "3306"
+      DB_NAME: BDD_VISA3
+      DB_USER: mariadb_user
+      DB_PASSWORD: "05102006"
+
     depends_on:
       - mariadb
     volumes:
