@@ -50,14 +50,18 @@ async def login(user: User):
     }
     
     bdd = get_db_connection()
-
-    with bdd.cursor() as cursor:
-        sql = "SELECT Email, Pass, Statut FROM Utilisateur WHERE Email=%s AND Pass=%s"
-        cursor.execute(sql, (user.username, user.password))
-        result = cursor.fetchone()
-
-    bdd.close()
-    return result if result else response
+    try:
+        with bdd.cursor() as cursor:
+            sql = "SELECT Email, Pass, Statut FROM Utilisateur WHERE Email=%s AND Pass=%s"
+            cursor.execute(sql, (user.username, user.password))
+            result = cursor.fetchone()
+        
+        return result if result else response
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+    finally:
+        bdd.close()
+    
 
     #if user.username == "superuser@test.fr" and user.password == "L@nnion":
     #    response = {"status": "success", "user": user.username, "password": user.password, "admin": True}
