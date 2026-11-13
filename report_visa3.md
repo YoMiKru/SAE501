@@ -183,4 +183,7 @@ api_products  | INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C t
 api_products  | INFO:     172.18.0.4:56410 - "GET / HTTP/1.1" 200 OK
 ```
 
-On a donc la confirmation que la connexion API fonctionne. La prochaine étape est de programmer l'API pour donner les informations en fonction des demandes. 
+On a donc la confirmation que la connexion API fonctionne. La prochaine étape est de programmer l'API pour qu'elle réponde au cahier des charges. 
+
+### III.3. Configuration de l'API d'authentification
+
