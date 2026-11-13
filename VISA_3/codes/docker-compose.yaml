@@ -12,7 +12,7 @@ services:
     environment:
       DB_HOST: mariadb
       DB_PORT: "3306"
-      DB_NAME: BDD_VISA3
+      DB_NAME: BDD_VISA2
       DB_USER: mariadb_user
       DB_PASSWORD: "05102006"
 
@@ -30,7 +30,7 @@ services:
 
     environment:
       MARIADB_ROOT_PASSWORD: "05102006"
-      MARIADB_DATABASE: "BDD_VISA3"
+      MARIADB_DATABASE: "BDD_VISA2"
       MARIADB_USER: "mariadb_user"
       MARIADB_PASSWORD: "05102006"
 
@@ -53,7 +53,7 @@ services:
     environment:
       DB_HOST: mariadb
       DB_PORT: "3306"
-      DB_NAME: BDD_VISA3
+      DB_NAME: BDD_VISA2
       DB_USER: mariadb_user
       DB_PASSWORD: "05102006"
 
@@ -73,7 +73,7 @@ services:
     environment:
       DB_HOST: mariadb
       DB_PORT: "3306"
-      DB_NAME: BDD_VISA3
+      DB_NAME: BDD_VISA2
       DB_USER: mariadb_user
       DB_PASSWORD: "05102006"
 
