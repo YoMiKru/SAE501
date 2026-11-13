@@ -11,16 +11,23 @@ class User(pydantic.BaseModel):
     password: str
     admin: bool = False
 
-# Connect to the database
-bdd = pymysql.connect(
-    host=os.getenv('DB_HOST', 'mariadb'),
-    port=int(os.getenv('DB_PORT', 3306)),
-    user=os.getenv('DB_USER', 'mariadb_user'),
-    password=os.getenv('DB_PASSWORD', ''),
-    database=os.getenv('DB_NAME', 'BDD_VISA3'),
-    charset='utf8mb4',
-    cursorclass=pymysql.cursors.DictCursor
-)
+def get_db_connection():
+    # on récupère les informations de connexion à la base de données depuis les variables d'environnement
+    db_host = os.getenv("DB_HOST", "")
+    db_port = int(os.getenv("DB_PORT", 3306))
+    db_name = os.getenv("DB_NAME", "")
+    db_user = os.getenv("DB_USER", "")
+    db_password = os.getenv("DB_PASSWORD", "")
+
+    # Create a connection to the MariaDB database
+    return pymysql.connect(
+        host=db_host,
+        port=db_port,
+        user=db_user,
+        password=db_password,
+        database=db_name,
+        cursorclass=pymysql.cursors.DictCursor
+    )
 
 
 # Simple endpoint to test the API
@@ -37,13 +44,19 @@ async def login():
 @app.post("/login")
 async def login(user: User):
     # Check if the user is in the database and if the password is correct and send back the status of the user
-    response = {"status": "error", "message": "Invalid username or password"}
+    response = {    
+        "status": "error", 
+        "message": "Invalid username or password"
+    }
     
+    bdd = get_db_connection()
+
     with bdd.cursor() as cursor:
         sql = "SELECT Email, Pass, Statut FROM Utilisateur WHERE Email=%s AND Pass=%s"
         cursor.execute(sql, (user.username, user.password))
         result = cursor.fetchone()
 
+    bdd.close()
     return result if result else response
 
     #if user.username == "superuser@test.fr" and user.password == "L@nnion":
