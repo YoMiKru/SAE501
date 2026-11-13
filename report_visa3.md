@@ -191,3 +191,4 @@ On a donc la confirmation que la connexion API fonctionne. La prochaine étape e
 
 Avant de rentrer dans le vif du sujet, on va ajouter une librairie à installer dans les services API. Pour que les API Python puissent communiquer avec la base de donnée MariaDB, on ne va pas utiliser la librairie : mariadb. (Erreurs répétés lors du déployement, la librairie n'est pas précompilé.) On va utiliser pymysql comme remplacant. 
 
+Et pour se faciliter la vie, on va également utiliser la librairie "os" qui fait partie de la bibliothèque standart de Python. Pas besoin de l'ajouter dans le fichier requierments.txt. Cette librairie va nous permettre d'utiliser les variables d'environnements du docker. 
