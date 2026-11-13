@@ -12,7 +12,6 @@ class User(pydantic.BaseModel):
     admin: bool = False
 
 # Connect to the database
-<<<<<<< HEAD
 bdd = pymysql.connect(
     host=os.getenv('DB_HOST', 'mariadb'),
     port=int(os.getenv('DB_PORT', 3306)),
@@ -22,15 +21,6 @@ bdd = pymysql.connect(
     charset='utf8mb4',
     cursorclass=pymysql.cursors.DictCursor
 )
-=======
-bdd = pymysql.connect(  host='mariadb',
-                        port=3306,
-                        user='mariadb_user',
-                        password='05102006',
-                        database='BDD_VISA3',
-                        charset='utf8mb4',
-                        cursorclass=pymysql.cursors.DictCursor)
->>>>>>> 94a3adb27885e4753baf0111ee590688ca0f50c0
 
 
 # Simple endpoint to test the API
