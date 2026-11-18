@@ -35,8 +35,6 @@ def get_db_connection():
 async def read_root():
     return {"message": "Hello World"}
 
-
-
 @app.get("/login")
 async def login():
     return {"message": "Login endpoint"}
@@ -44,9 +42,9 @@ async def login():
 @app.post("/login")
 async def login(user: User):
     # Check if the user is in the database and if the password is correct and send back the status of the user
-    response = {    
-        "status": "error", 
-        "message": "Invalid username or password"
+    response:dict = {    
+        "status": "Error", 
+        "message": "Go see the logs for more information",
     }
     
     bdd = get_db_connection()
@@ -54,20 +52,15 @@ async def login(user: User):
         with bdd.cursor() as cursor:
             sql = "SELECT Email, Pass, Statut FROM Utilisateur WHERE Email=%s AND Pass=%s"
             cursor.execute(sql, (user.username, user.password))
-            result = cursor.fetchone()
-
-        return result if result else response
+            result:dict = cursor.fetchone()
     
     finally:
         bdd.close()
     
-
-    #if user.username == "superuser@test.fr" and user.password == "L@nnion":
-    #    response = {"status": "success", "user": user.username, "password": user.password, "admin": True}
-    #if user.username == "simpleuser@test.fr" and user.password == "L@nnion":
-    #    response = {"status": "success", "user": user.username, "password": user.password, "admin": False}
-    #else:
-    #    raise fastapi.HTTPException(status_code=401, detail="Invalid username or password")
+    if result["Email"] == user.username and result["Pass"] == user.password:
+        response = {"status": "Success", "user": result["Email"], "admin": result["Statut"] == 1 if result["Statut"] is "admin" else False}
+    elif 
+        raise fastapi.HTTPException(status_code=401, detail="Invalid username or password")        
     
-    #return response
+    return response
 
