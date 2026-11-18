@@ -18,7 +18,7 @@ try {
 
     $ch = curl_init();
     curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://api_auth:8000/login',
+        CURLOPT_URL => 'http://api_auth:8001/login',
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => json_encode($donnees),
@@ -64,19 +64,6 @@ catch (Exception $e) {
 }
 finally{
     curl_close($ch);
-}
-
-// Journal de connexion : ne jamais y écrire le mot de passe.
-$log = fopen('/var/www/logs/connexion.log', 'a');
-if ($log !== false) {
-    fwrite(
-        $log,
-        date('Y-m-d H:i:s') . ' - ' .
-        str_replace(["\r", "\n"], '', $email) . ' - ' .
-        ($_SERVER['REMOTE_ADDR'] ?? 'inconnue') . ' - ' .
-        $status . ' - Rôle : ' . $role . PHP_EOL
-    );
-    fclose($log);
 }
 
 header('Location: ' . $redirect);
