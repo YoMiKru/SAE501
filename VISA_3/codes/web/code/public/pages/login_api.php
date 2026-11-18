@@ -41,9 +41,9 @@ try {
         if (!is_array($data) || !isset($data['user'], $data['admin'])) {
             throw new Exception('Réponse inattendue de l’API');
         }
-        $role = $data['admin'];
+        
         $_SESSION['email'] = $data['user'];
-        $_SESSION['statut'] = $role;
+        $_SESSION['statut'] = $data['admin'];
         $status = 'Succès';
         $redirect = '/index.php';
     } elseif ($code === 401) {
