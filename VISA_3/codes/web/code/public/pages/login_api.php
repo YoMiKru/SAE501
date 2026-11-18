@@ -31,7 +31,6 @@ try {
         $_SESSION['email'] = $reponse["user"];
         $_SESSION['statut'] = $reponse["admin"] ? 'admin' : 'user';
         $status = 'Succès';
-        $role = "admin" if $_SESSION['statut'] == True else 'user';
         $redirect = '/index.php';
     } else {
         $_SESSION['login_error'] = 'Email ou mot de passe incorrect.';
