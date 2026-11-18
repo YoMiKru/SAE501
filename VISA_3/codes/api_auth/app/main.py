@@ -58,8 +58,7 @@ async def login(user: User):
         bdd.close()
     
     if result["Email"] == user.username and result["Pass"] == user.password:
-        response = {"status": "Success", "user": result["Email"], "admin": result["Statut"] == True if result["Statut"] is "admin" else False}
-        print(f"LOG : {response}")
+        response = {"status": "Success", "user": result["Email"], "admin": result["Statut"] == 1 if result["Statut"] is "admin" else False}
     else:
         raise fastapi.HTTPException(status_code=401, detail="Invalid username or password")        
     
