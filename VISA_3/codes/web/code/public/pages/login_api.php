@@ -41,7 +41,7 @@ try {
         if (!is_array($data) || !isset($data['user'], $data['admin'])) {
             throw new Exception('Réponse inattendue de l’API');
         }
-        $role = filter_var($data['admin'], FILTER_VALIDATE_BOOLEAN) ? 'admin' : 'user';
+        $role = $data['admin'];
         $_SESSION['email'] = $data['user'];
         $_SESSION['statut'] = $role;
         $status = 'Succès';
