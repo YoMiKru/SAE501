@@ -60,6 +60,7 @@ async def login(user: User):
     if result["Email"] == user.username and result["Pass"] == user.password:
         response = {"status": "Success", "user": result["Email"], "admin": result["Statut"] == 1 if result["Statut"] is "admin" else False}
         print(f"LOG : {response}")
+        print(f"LOG : {result}")
     else:
         raise fastapi.HTTPException(status_code=401, detail="Invalid username or password")        
     
