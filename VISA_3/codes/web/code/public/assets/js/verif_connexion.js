@@ -4,7 +4,7 @@ function verifForm() {
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
     if (!hasUppercase || !hasSpecialChar) {
-        alert("Le mot de passe doit contenir une majuscule et un caractère spécial.");
+        alert("Mot de passe invalide.");
         return false;
     }
     return true;

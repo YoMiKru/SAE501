@@ -21,7 +21,7 @@
         ?>
         
         <main>
-            <form method="POST" action="/pages/login_action.php" onsubmit="return verifForm();">
+            <form method="POST" action="/pages/login_api.php" onsubmit="return verifForm();">
                 <label>Email :</label><br>
                 <input type="email" name="email" required><br><br>
 
