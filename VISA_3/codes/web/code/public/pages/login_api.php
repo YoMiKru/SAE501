@@ -12,35 +12,55 @@ $password = $_POST['password'];
 
 try {
     $donnees = array(
-        'email' => $email,
+        'username' => $email,
         'password' => $password
     );
 
     $ch = curl_init();
     curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://api_auth:8000/login',                    # api_auth est le nom du service dans le docker-compose, docker résout automatiquement les noms des services
+        CURLOPT_URL => 'http://api_auth:8000/login',
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => json_encode($donnees),
-        CURLOPT_HTTPHEADER => array('Content-Type: application/json')
+        CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_TIMEOUT => 5
     ));
 
     $reponse = curl_exec($ch);
 
-    if ($reponse && $reponse["status"] === "Success") {
-        $_SESSION['email'] = $reponse["user"];
-        $_SESSION['statut'] = $reponse["admin"] ? 'admin' : 'user';
+    // curl_exec ne lève pas d'exception : il renvoie false si l'API est injoignable
+    if ($reponse === false) {
+        throw new Exception('Erreur cURL : ' . curl_error($ch));
+    }
+
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    if ($code === 200) {
+        $data = json_decode($reponse, true);
+        if (!is_array($data) || !isset($data['user'], $data['admin'])) {
+            throw new Exception('Réponse inattendue de l’API');
+        }
+        $role = $data['admin'] ? 'admin' : 'user';
+        $_SESSION['email'] = $data['user'];
+        $_SESSION['statut'] = $role;
         $status = 'Succès';
         $redirect = '/index.php';
-    } else {
+    } elseif ($code === 401) {
         $_SESSION['login_error'] = 'Email ou mot de passe incorrect.';
         $status = 'Échec';
         $role = 'N/A';
         $redirect = '/pages/login.php';
+    } else {
+        throw new Exception('Code HTTP inattendu : ' . $code);
     }
 }
-else{
-    throw new Exception('Erreur lors de la requête cURL : ' . curl_error($ch));
+catch (Exception $e) {
+    error_log('Erreur de connexion à l’API : ' . $e->getMessage());
+    $_SESSION['login_error'] = 'Service temporairement indisponible. Réessayez plus tard.';
+    $status = 'Erreur API';
+    $role = 'N/A';
+    $redirect = '/pages/login.php';
 }
 finally{
     curl_close($ch);
