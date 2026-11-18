@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' ||
 $email = trim($_POST['email']);
 $password = $_POST['password'];
 
-try:
+try {
     $donnees = array(
         'email' => $email,
         'password' => $password
@@ -39,13 +39,13 @@ try:
         $role = 'N/A';
         $redirect = '/pages/login.php';
     }
-
-else:
+}
+else{
     throw new Exception('Erreur lors de la requête cURL : ' . curl_error($ch));
-
-finally:
+}
+finally{
     curl_close($ch);
-
+}
 
 // Journal de connexion : ne jamais y écrire le mot de passe.
 $log = fopen('/var/www/logs/connexion.log', 'a');
