@@ -9,7 +9,7 @@ app = fastapi.FastAPI()
 class User(pydantic.BaseModel):
     username: str
     password: str
-    admin: bool
+    admin: str
 
 def get_db_connection():
     # on récupère les informations de connexion à la base de données depuis les variables d'environnement
