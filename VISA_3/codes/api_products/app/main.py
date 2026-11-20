@@ -1,7 +1,66 @@
 import fastapi
+import pymysql
+import pydantic
+import os
 
 app = fastapi.FastAPI()
 
-@app.get("/")
+class Product(pydantic.BaseModel):
+    name: str
+    price: float
+    bio: bool
+    producteur: str
+    image_path: str
+
+
+
+def get_db_connection():
+    # on récupère les informations de connexion à la base de données depuis les variables d'environnement
+    db_host = os.getenv("DB_HOST", "")
+    db_port = int(os.getenv("DB_PORT", 3306))
+    db_name = os.getenv("DB_NAME", "")
+    db_user = os.getenv("DB_USER", "")
+    db_password = os.getenv("DB_PASSWORD", "")
+
+    # Create a connection to the MariaDB database
+    return pymysql.connect(
+        host=db_host,
+        port=db_port,
+        user=db_user,
+        password=db_password,
+        database=db_name,
+        cursorclass=pymysql.cursors.DictCursor
+    )
+
+@app.get("/helloworld")
+async def read_root():
+    return {"Hello": "World"}
+
+@app.get("/products")
+async def read_root():
+    try:
+        bdd = get_db_connection()
+        with bdd.cursor() as cursor:
+            sql = "SELECT * FROM Produit"
+            cursor.execute(sql)
+            result: list = cursor.fetchall()
+
+        response = {"status": "Success", "products": result}
+    except Exception as e:
+        response = {"status": "Error", "message": str(e)}
+    finally:
+        bdd.close()
+
+    return response
+
+@app.POST("/products")
+async def read_root():
+    return {"Hello": "World"}
+
+@app.PUT("/products/{id}")
+async def read_root():
+    return {"Hello": "World"}
+
+@app.DELETE("/products/{id}")
 async def read_root():
     return {"Hello": "World"}

@@ -395,4 +395,240 @@ async def login(user: User):
 
 Ce qu'il nous reste à dire pour la partie authentification est d'adapter le code PHP du service web. 
 
-### III.4 Adaptation du code d'authentification PHP
+### III.4. Adaptation du code d'authentification PHP
+
+Actuellement, le code d'authentification PHP a son propre système d'authenfication de la base de donnée de donnée MariaDB et surtout demande de lui même les informations. 
+
+Pour une meilleure compréhension, on va partir d'un fichier PHP vierge : login_api.php où on reprend uniquement certains éléments de login_action.php : 
+
+```php
+<?php
+session_start();
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' ||
+    !isset($_POST['email'], $_POST['password'])) {
+    header('Location: /pages/login.php');
+    exit();
+}
+
+$email = trim($_POST['email']);
+$password = $_POST['password'];
+
+header('Location: ' . $redirect);
+exit();
+?>
+```
+
+Ce code permet de préparer le traitement d'une connexion utilisateur. Il vérifie que les informations nécessaires ont bien été envoyées depuis le formulaire de connexion, récupère et nettoie l'adresse e-mail, puis prépare la redirection de l'utilisateur vers une autre page. La gestion de la session permet de conserver les informations de connexion entre les différentes pages du site.
+
+Pour la requête vers l'API, on va utiliser **cURL** (Client URL) qui permet d'emmetre différent requête à des URLs en tant que client. Dans notre cas, on va émettre une requête avec la méthode **POST**. Pour ce faire, on a cette syntaxe : 
+
+```php
+    $donnees = array(
+        'nom_donnee' => 'valeur',
+        ...
+    );
+
+    $ch = curl_init();
+
+    curl_setopt_array($ch, array(
+        CURLOPT_URL => 'http://lien_cible.fr/endpoint',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode(xxxx);
+        CURLOPT_HTTPHEADER => array('Content-Type: application/xxxx');
+        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_TIMEOUT => 5
+    ));
+
+    $reponse = curl_exec($ch);
+
+    curl_close($ch);
+```
+
+La variable ``$donnees`` est un tableau correspondant aux données qu'on souhaite envoyer vers l'API. Dans notre cas, on va vouloir envoyer l'addresse Email de l'utilisateur et son mot de passe. 
+
+La fonction ``curl_init()`` permet d'initialiser une nouvelle session cURL et de retourner un descripteur (handle) cURL destiné à être utilié avec d'autres fonctions comme ``curl_setopt()``, ``curl_exec()`` ou encore ``curl_close()``. 
+
+La fonction ``curl_setopt_array()`` est une variante de ``curl_setopt()`` qui permet de spécifier différents paramètres sous la forme d'un tableau. On y renseigne nottament 3 paramètres pertinents : 
+
+- CURLOPT_URL : On spécifie l'URL qu'on souhaite joindre les informations, dans notre cas : **http://api_auth:8001/login**
+
+- CURLOPT_POST : Permet de spécifier si on veut utiliser la méthode **POST**. 
+
+- CURLOPT_POSTFIELDS" : Spécifie les données qu'on envoie dans la requête grâce à la méthode **POST**, on n'oublie pas d'encoder les données.
+
+- CURLOPT_HTTPHEADER" : Spécifie le type de donnée qu'on envoie. Dans notre cas, on envoie un **JSON**. 
+
+On retrouve donc le bloc correspondant : 
+
+```php
+curl_setopt_array($ch, array(
+    CURLOPT_URL => 'http://api_auth:8001/login',
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_POST => true,
+    CURLOPT_POSTFIELDS => json_encode($donnees),
+    CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+    CURLOPT_CONNECTTIMEOUT => 3,
+    CURLOPT_TIMEOUT => 5
+));
+```
+
+La fonction ``curl_exec()`` permet d'executer la requête cURL. On peut extraire la réponse.
+La fonction ``curl_close()``  permet de fermer le client URL. 
+
+On a donc préparé, exécuté et récupéré la réponse de la requête. Maintenant on peut la traiter. Pour ce faire, on retrouve le code suivant : 
+
+```php
+if ($reponse === false) {
+        throw new Exception('Erreur cURL : ' . curl_error($ch));
+    }
+
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    if ($code === 200) {
+        $data = json_decode($reponse, true);
+        if (!is_array($data) || !isset($data['user'], $data['admin'])) {
+            throw new Exception('Réponse inattendue de l’API');
+        }
+        
+        $_SESSION['email'] = $data['user'];
+        $_SESSION['statut'] = $data['admin'];
+        $status = 'Succès';
+        $redirect = '/index.php';
+    } elseif ($code === 401) {
+        $_SESSION['login_error'] = 'Email ou mot de passe incorrect.';
+        $status = 'Échec';
+        $role = 'N/A';
+        $redirect = '/pages/login.php';
+    } else {
+        throw new Exception('Code HTTP inattendu : ' . $code);
+    }
+```
+
+Ce bloc permet de traiter la réponse renvoyée par l'API d'authentification. Il vérifie d'abord si une erreur cURL est survenue, puis récupère le code HTTP de la réponse.
+
+Si l'authentification réussit (code 200), les données JSON sont récupérées et les informations de l'utilisateur sont enregistrées dans la session PHP. L'utilisateur est ensuite redirigé vers la page d'accueil.
+
+Si les identifiants sont incorrects (code 401), un message d'erreur est enregistré dans la session et l'utilisateur est redirigé vers la page de connexion.
+
+Enfin, si une autre erreur survient ou si la réponse de l'API est inattendue, une exception est déclenchée.
+
+On retrouve donc le code suivant : 
+
+```php
+<?php
+session_start();
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' ||
+    !isset($_POST['email'], $_POST['password'])) {
+    header('Location: /pages/login.php');
+    exit();
+}
+
+$email = trim($_POST['email']);
+$password = $_POST['password'];
+
+try {
+    $donnees = array(
+        'username' => $email,
+        'password' => $password
+    );
+
+    $ch = curl_init();
+    curl_setopt_array($ch, array(
+        CURLOPT_URL => 'http://api_auth:8001/login',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($donnees),
+        CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_TIMEOUT => 5
+    ));
+
+    $reponse = curl_exec($ch);
+
+    // curl_exec ne lève pas d'exception : il renvoie false si l'API est injoignable
+    if ($reponse === false) {
+        throw new Exception('Erreur cURL : ' . curl_error($ch));
+    }
+
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    if ($code === 200) {
+        $data = json_decode($reponse, true);
+        if (!is_array($data) || !isset($data['user'], $data['admin'])) {
+            throw new Exception('Réponse inattendue de l’API');
+        }
+        
+        $_SESSION['email'] = $data['user'];
+        $_SESSION['statut'] = $data['admin'];
+        $status = 'Succès';
+        $redirect = '/index.php';
+    } elseif ($code === 401) {
+        $_SESSION['login_error'] = 'Email ou mot de passe incorrect.';
+        $status = 'Échec';
+        $role = 'N/A';
+        $redirect = '/pages/login.php';
+    } else {
+        throw new Exception('Code HTTP inattendu : ' . $code);
+    }
+}
+catch (Exception $e) {
+    error_log('Erreur de connexion à l’API : ' . $e->getMessage());
+    $_SESSION['login_error'] = 'Service temporairement indisponible. Réessayez plus tard.';
+    $status = 'Erreur API';
+    $role = 'N/A';
+    $redirect = '/pages/login.php';
+}
+finally{
+    curl_close($ch);
+}
+
+header('Location: ' . $redirect);
+exit();
+
+?>
+```
+
+Puisque le nom du fichier est différent du précédent, il ne faut pas oublier de changer la valeur de l'action dans la page login.php : 
+
+```html
+<form method="POST" action="/pages/login_api.php" onsubmit="return verifForm();">
+```
+
+### III.5. Configuration de l'API des produits
+
+Le but de cette API est de gérer toutes les opérations CRUD sur la table Produit de notre base de données MariaDB.
+
+C'est un service indépendant qui permet de :
+
+- Ajouter de nouveaux produits au catalogue
+- Récupérer une liste
+- Modifier les informations d'un produit
+- Supprimer un produit si nécessaire
+
+Cette séparation est importante pour garder une architecture propre : chaque table a sa propre API dédiée, ce qui permet aussi une meilleure sécurité puisque les APIs sont indépendantes.
+
+Architecture des routes (Endpoints)
+Comme dans le code PHP, on va structurer l'API avec des routes bien définies :
+
+- GET	    /products : Liste tous les produits du catalogue
+- POST	    /products : Créer un nouveau produit (CRUD - Create)
+- PUT	    /products/{id} : Modifier un produit par ID (CRUD - Update)
+- DELETE	/products/{id} : Supprimer un produit (CRUD - Delete)
+
+
+Modèles de données Pydantic
+Comme pour l'API d'authentification, on va utiliser la librairie Pydantic pour valider et structurer les données reçues :
+
+```python
+class Product(pydantic.BaseModel):
+    name: str                    # Nom du produit 
+    price: float                 # Prix en euros
+    bio: bool                    # Est-ce que c'est bio ?
+    producteur:str               # Le nom du producteur
+    image_path:str               # Le chemin de l'image ajouté (OPT)
+```
+
+Pour l'image, on va laisser le code PHP télécharger l'image dans le dossier correspondant mais c'est l'API qui va noter dans la base de données le chemin correspondant. 
