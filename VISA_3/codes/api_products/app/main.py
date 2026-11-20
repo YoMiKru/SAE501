@@ -37,15 +37,19 @@ async def read_root():
     return {"Hello": "World"}
 
 @app.get("/products")
-async def read_root():
+async def read_root(ville: str = "*"):
     try:
         bdd = get_db_connection()
         with bdd.cursor() as cursor:
-            sql = "SELECT * FROM Produit"
-            cursor.execute(sql)
+            sql = "SELECT * FROM Produit WHERE Ville=%s" if ville != "*" else "SELECT * FROM Produit"
+            cursor.execute(sql, (ville,) if ville != "*" else ())
+
             result: list = cursor.fetchall()
 
-        response = {"status": "Success", "products": result}
+        if result:
+            response = {"status": "Error", "message": "Erreur lors de la récupération des produits"}
+        else:
+            response = {"status": "Success", "products": result}
     except Exception as e:
         response = {"status": "Error", "message": str(e)}
     finally:
