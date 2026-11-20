@@ -52,6 +52,11 @@ async def login(user: User):
             sql = "SELECT Email, Pass, Statut FROM Utilisateur WHERE Email=%s AND Pass=%s"
             cursor.execute(sql, (user.username, user.password))
             result:dict = cursor.fetchone()
+
+            print(f"LOG : {result}")
+
+    except Exception as e:
+        response = {"status": "Error", "message": str(e)}
     
     finally:
         bdd.close()
