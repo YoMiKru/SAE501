@@ -45,7 +45,9 @@ async def read_root(ville: str = "*"):
             cursor.execute(sql, (ville,) if ville != "*" else ())
 
             result: list = cursor.fetchall()
-
+            result_dict: dict = cursor.fetchall()
+            
+            print(f"LOG : {result_dict}")
             print(f"LOG : {result}")
 
         if result:
