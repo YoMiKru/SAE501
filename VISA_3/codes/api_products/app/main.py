@@ -62,12 +62,11 @@ async def read_root(ville: str = "*"):
             result: list[dict] = cursor.fetchall()
 
             print(f"LOG : {result}")
-            print(f"LOG : {cursor}")
 
-        result = fix_json(str(result))
-        print(f"LOG : {result}")
+        #result = fix_json(str(result))
+        #print(f"LOG : {result}")
 
-        if result:
+        if not result:
             response = {"status": "Error", "message": "Erreur lors de la récupération des produits"}
         else:
             response = {"status": "Success", "products": result}
