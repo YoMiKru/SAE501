@@ -12,6 +12,21 @@ class Product(pydantic.BaseModel):
     producteur: str
     image_path: str
 
+def fix_json(bad_json: str) -> str:
+    """
+    Fixes a JSON string by replacing single quotes with double quotes.
+
+    Args:
+        bad_json (str): The JSON string to fix.
+
+    Returns:
+        str: The fixed JSON string.
+    """
+    for i in range(len(bad_json)):
+        if bad_json[i] == "'":
+            bad_json = bad_json[:i] + '"' + bad_json[i+1:]
+
+    return bad_json
 
 
 def get_db_connection():
@@ -45,10 +60,11 @@ async def read_root(ville: str = "*"):
             cursor.execute(sql, (ville,) if ville != "*" else ())
 
             result: list = cursor.fetchall()
-            result_dict: dict = cursor.fetchall()
             
-            print(f"LOG : {result_dict}")
             print(f"LOG : {result}")
+
+        result = fix_json(str(result))
+        print(f"LOG : {result}")
 
         if result:
             response = {"status": "Error", "message": "Erreur lors de la récupération des produits"}
