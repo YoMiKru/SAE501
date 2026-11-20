@@ -59,9 +59,10 @@ async def read_root(ville: str = "*"):
             sql = "SELECT * FROM Produit WHERE Ville=%s" if ville != "*" else "SELECT * FROM Produit"
             cursor.execute(sql, (ville,) if ville != "*" else ())
 
-            result: list = cursor.fetchall()
-            
+            result: list[dict] = cursor.fetchall()
+
             print(f"LOG : {result}")
+            print(f"LOG : {cursor}")
 
         result = fix_json(str(result))
         print(f"LOG : {result}")
