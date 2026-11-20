@@ -53,14 +53,14 @@ async def read_root():
 
     return response
 
-@app.POST("/products")
+@app.post("/products")
 async def read_root():
     return {"Hello": "World"}
 
-@app.PUT("/products/{id}")
+@app.put("/products/{id}")
 async def read_root():
     return {"Hello": "World"}
 
-@app.DELETE("/products/{id}")
+@app.delete("/products/{id}")
 async def read_root():
     return {"Hello": "World"}
