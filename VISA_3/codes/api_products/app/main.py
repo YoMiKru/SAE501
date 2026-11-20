@@ -46,6 +46,8 @@ async def read_root(ville: str = "*"):
 
             result: list = cursor.fetchall()
 
+            print(f"LOG : {result}")
+
         if result:
             response = {"status": "Error", "message": "Erreur lors de la récupération des produits"}
         else:
