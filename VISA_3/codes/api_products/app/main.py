@@ -12,23 +12,6 @@ class Product(pydantic.BaseModel):
     producteur: str
     image_path: str
 
-def fix_json(bad_json: str) -> str:
-    """
-    Fixes a JSON string by replacing single quotes with double quotes.
-
-    Args:
-        bad_json (str): The JSON string to fix.
-
-    Returns:
-        str: The fixed JSON string.
-    """
-    for i in range(len(bad_json)):
-        if bad_json[i] == "'":
-            bad_json = bad_json[:i] + '"' + bad_json[i+1:]
-
-    return bad_json
-
-
 def get_db_connection():
     # on récupère les informations de connexion à la base de données depuis les variables d'environnement
     db_host = os.getenv("DB_HOST", "")
@@ -53,18 +36,18 @@ async def read_root():
 
 @app.get("/products")
 async def read_root(ville: str = "*"):
+    # Renvoie tous les produits si la ville est "*", sinon renvoie les produits de la ville spécifiée
+    # Renvoie sous d'un dictioonnaire avec un status et les produits ou un message d'erreur
+    # La liste des produits est sous forme d'une liste de dictionnaires qui est dans le dictionnaire de réponse sous la clé "products"
     try:
         bdd = get_db_connection()
         with bdd.cursor() as cursor:
-            sql = "SELECT * FROM Produit WHERE Ville=%s" if ville != "*" else "SELECT * FROM Produit"
+            sql = "SELECT * FROM Produit WHERE Ville=%s" if ville != "*" else "SELECT * FROM Produit INNER JOIN Producteur ON Produit.NoProducteur = Producteur.NoProducteur"
             cursor.execute(sql, (ville,) if ville != "*" else ())
 
             result: list[dict] = cursor.fetchall()
 
-            print(f"LOG : {result}")
-
-        #result = fix_json(str(result))
-        #print(f"LOG : {result}")
+            # print(f"LOG : {result}")
 
         if not result:
             response = {"status": "Error", "message": "Erreur lors de la récupération des produits"}
