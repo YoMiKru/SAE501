@@ -632,3 +632,39 @@ class Product(pydantic.BaseModel):
 ```
 
 Pour l'image, on va laisser le code PHP télécharger l'image dans le dossier correspondant mais c'est l'API qui va noter dans la base de données le chemin correspondant. 
+
+Au niveau du code, on retrouve les mêmes librairies que pour l'API d'authentification, à savoir : fastapi, pydantic et pymysql. On retrouve également la fonction get_db_connection() pour se connecter à la base de données adaptés pour la table Produit.
+
+On a cependant, une classe Product qui permet de définir le modèle de données pour les produits. Cette classe hérite de pydantic.BaseModel et définit les champs attendus pour un produit : name, price, bio, producteur et image_path.
+
+On a toujours un endpoint Hello World pour vérifier que l'API répond lors de la requête GET. On a également un endpoint GET /products qui permet de récupérer tous les produits de la base de données. 
+
+```python
+@app.get("/products")
+async def read_root(ville: str = "*"):
+    # Renvoie tous les produits si la ville est "*", sinon renvoie les produits de la ville spécifiée
+    # Renvoie sous d'un dictioonnaire avec un status et les produits ou un message d'erreur
+    # La liste des produits est sous forme d'une liste de dictionnaires qui est dans le dictionnaire de réponse sous la clé "products"
+    try:
+        bdd = get_db_connection()
+        with bdd.cursor() as cursor:
+            sql = "SELECT * FROM Produit WHERE Producteur.Ville=%s" if ville != "*" else "SELECT * FROM Produit INNER JOIN Producteur ON Produit.NoProducteur = Producteur.NoProducteur"
+            cursor.execute(sql, (ville,) if ville != "*" else ())
+
+            result: list[dict] = cursor.fetchall()
+
+            # print(f"LOG : {result}")
+
+        if not result:
+            response = {"status": "Error", "message": "Erreur lors de la récupération des produits"}
+        else:
+            response = {"status": "Success", "products": result}
+    except Exception as e:
+        response = {"status": "Error", "message": str(e)}
+    finally:
+        bdd.close()
+
+    return response
+```
+
+Ce code renvoie un dictionnaire JSON contenant le statut de la requête et la liste des produits récupérés depuis la base de données. Si une ville spécifique est fournie, seuls les produits de cette ville seront renvoyés. Sinon, tous les produits seront listés.
