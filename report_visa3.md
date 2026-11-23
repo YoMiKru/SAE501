@@ -648,8 +648,18 @@ async def read_root(ville: str = "*"):
     try:
         bdd = get_db_connection()
         with bdd.cursor() as cursor:
-            sql = "SELECT * FROM Produit WHERE Producteur.Ville=%s" if ville != "*" else "SELECT * FROM Produit INNER JOIN Producteur ON Produit.NoProducteur = Producteur.NoProducteur"
-            cursor.execute(sql, (ville,) if ville != "*" else ())
+            sql = """
+                SELECT *
+                FROM Produit
+                INNER JOIN Producteur
+                ON Produit.NoProducteur = Producteur.NoProducteur
+            """
+
+            if ville != "*":
+                sql += " WHERE Producteur.Ville = %s"
+                cursor.execute(sql, (ville,))
+            else:
+                cursor.execute(sql)
 
             result: list[dict] = cursor.fetchall()
 
