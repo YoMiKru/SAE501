@@ -81,8 +81,12 @@ services:
 
     depends_on:
       - mariadb
+
+    command: mkdir -p ./web/code/public/assets/images
+    
     volumes:
       - ./api_products/app:/app
+      - ./web/code/public/assets/images:/var/www/html/assets/images/
     networks:
       - app_network
 

@@ -615,7 +615,7 @@ Comme dans le code PHP, on va structurer l'API avec des routes bien définies :
 
 - GET	    /products : Liste tous les produits du catalogue
 - POST	    /products : Créer un nouveau produit (CRUD - Create)
-- PUT	    /products/{id} : Modifier un produit par ID (CRUD - Update)
+- PATCH	    /products/{id} : Modifier un produit (CRUD - Update)
 - DELETE	/products/{id} : Supprimer un produit (CRUD - Delete)
 
 
@@ -630,8 +630,6 @@ class Product(pydantic.BaseModel):
     producteur:str               # Le nom du producteur
     image_path:str               # Le chemin de l'image ajouté (OPT)
 ```
-
-Pour l'image, on va laisser le code PHP télécharger l'image dans le dossier correspondant mais c'est l'API qui va noter dans la base de données le chemin correspondant. 
 
 Au niveau du code, on retrouve les mêmes librairies que pour l'API d'authentification, à savoir : fastapi, pydantic et pymysql. On retrouve également la fonction get_db_connection() pour se connecter à la base de données adaptés pour la table Produit.
 
@@ -679,12 +677,17 @@ async def read_root(ville: str = "*"):
 
 Ce code renvoie un dictionnaire JSON contenant le statut de la requête et la liste des produits récupérés depuis la base de données. Si une ville spécifique est fournie, seuls les produits de cette ville seront renvoyés. Sinon, tous les produits seront listés.
 
-Le code PHP de la page index.php est également à revoir. Actuellement, la sélection des villes disponibles est statique, il faut modifier le code pour que les choix de la sélection des villes soit fait dynamiquement. 
+---
 
-BONUS : On peut ajouter le filtre BIO. 
+Le code PHP de la page index.php doit également être modifié afin de s'adapter à notre nouvelle architecture. Jusqu'à maintenant, la page récupérait directement les produits depuis la base de données MariaDB grâce à une connexion PDO.
 
-On passe de ce formulaire : 
+Désormais, cette récupération passe par notre API api_products. Cela permet de centraliser les interactions avec la base de données dans notre API, plutôt que de laisser plusieurs parties de notre application communiquer directement avec MariaDB.
 
+On en profite également pour améliorer le système de filtrage des produits. Jusqu'à maintenant, les villes disponibles dans le formulaire étaient définies manuellement. Il fallait donc modifier le code HTML à chaque ajout d'une nouvelle ville.
+
+On va remplacer ce fonctionnement par une génération dynamique des choix, directement à partir des produits récupérés depuis l'API.
+
+On passe de ce formulaire statique :
 ```html
 <form id="filtre-form">
     <label for="ville">Filtrer par ville :</label>
@@ -697,9 +700,8 @@ On passe de ce formulaire :
 </form>
 ```
 
-A ce formulaire : 
-
-```html
+À ce nouveau formulaire dynamique :
+```php
 <form id="filtre-form" method="GET">
     <label for="ville">Filtrer par ville :</label>
     <select name="ville" id="ville" onchange="this.form.submit()">
@@ -707,7 +709,7 @@ A ce formulaire :
 
         <?php foreach ($villes as $ville): ?>
             <option value="<?= htmlspecialchars($ville) ?>"
-                <?= ($_GET['ville'] ?? '*') === $ville ? 'selected' : '' ?>>
+                <?= $villeSelectionnee === $ville ? 'selected' : '' ?>>
                 <?= htmlspecialchars($ville) ?>
             </option>
         <?php endforeach; ?>
@@ -715,11 +717,159 @@ A ce formulaire :
 
     <label for="bio">Filtrer par agriculture biologique :</label>
     <select name="bio" id="bio" onchange="this.form.submit()">
-        <option value="*" <?= ($_GET['bio'] ?? '*') === '*' ? 'selected' : '' ?>>Tous</option>
-        <option value="1" <?= ($_GET['bio'] ?? '') === '1' ? 'selected' : '' ?>>Bio</option>
-        <option value="0" <?= ($_GET['bio'] ?? '') === '0' ? 'selected' : '' ?>>Non bio</option>
+        <option value="*" <?= $bioSelectionne === '*' ? 'selected' : '' ?>>Tous</option>
+        <option value="1" <?= $bioSelectionne === '1' ? 'selected' : '' ?>>Bio</option>
+        <option value="0" <?= $bioSelectionne === '0' ? 'selected' : '' ?>>Non bio</option>
     </select>
 </form>
 ```
 
-Dans index.php, on peut également supprimer la partie du code qui se connecte à la base de données pour récupérer les produits. On va désormais utiliser l'API pour récupérer les produits.
+On ajoute également un deuxième filtre permettant de choisir entre les produits biologiques et non biologiques. C'est un petit bonus qui permet d'affiner davantage l'affichage.
+
+Récupération des produits depuis l'API
+
+Dans index.php, on supprime donc l'ancienne connexion PDO et la requête SQL qui permettait de récupérer directement les produits depuis MariaDB.
+
+On utilise désormais cURL pour contacter notre API api_products, qui se charge elle-même de communiquer avec la base de données.
+
+```php
+$ch = curl_init("http://api_products:8001/products");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+$response = curl_exec($ch);
+```
+
+La réponse reçue est ensuite convertie depuis le format JSON vers un tableau associatif PHP avec ``json_decode()``. On peut ainsi récupérer la liste des produits et exploiter leurs différentes informations directement dans notre page.
+
+On ajoute également quelques vérifications afin de s'assurer que la requête a bien fonctionné et que l'API a renvoyé les données attendues.
+
+**Génération des villes et application des filtres**
+
+Une fois les produits récupérés, on utilise array_column() pour extraire toutes les villes présentes dans la liste. ``array_unique()`` permet ensuite de supprimer les doublons, tandis que sort() trie les villes par ordre alphabétique.
+
+Les choix disponibles dans le formulaire sont donc automatiquement adaptés aux données renvoyées par l'API.
+
+Enfin, on utilise ``array_filter()`` pour appliquer les critères de sélection aux produits déjà récupérés. Si une ville particulière est sélectionnée, seuls les produits associés à cette ville sont conservés. Le même principe est appliqué au filtre BIO.
+
+Important : les filtres ne déclenchent pas de nouvelles requêtes SQL ni de nouveaux appels spécifiques à l'API pour chaque sélection. Les produits sont récupérés au chargement de la page, puis filtrés directement en PHP à partir des données déjà disponibles.
+
+Cette modification permet donc de rendre la page d'accueil plus dynamique, tout en séparant mieux les responsabilités entre notre interface PHP, notre API FastAPI et notre base de données MariaDB.
+
+---
+
+**Fonctions d'insertion, de moficiation et de suppression de produits**
+
+La page de modification de produit n'a jamais été réellement implémenté. La page existe, on peut choisir un produit mais aucune option de modification de ce produit n'a jamais été fait. 
+
+C'est pour cette raison et le manque de temps que la page modification ne va pas être migrée vers l'API.
+
+On ne fera donc que la partie **insertion** et **suppression**. 
+
+---
+
+**Fonction suppresion**
+
+Pour cette fonction, on utilisera l'opération **DELETE** en prenant depuis l'endpoint l'information qui permettra d'identifier quel produit supprimer : **le id du produit**. 
+
+```python
+@app.delete("/products/{id}")
+async def read_root(id:int):
+    try:
+        bdd = get_db_connection()
+        with bdd.cursor() as cursor:
+            sql = f"DELETE * FROM Produit WHERE id = {id}"
+            cursor.execute(sql)
+
+        response = {"status":"Success","message":f"le produit {id} a été supprimé"}
+
+    except Exception as e:
+        response = {"status":"Error","message":"Suppression impossible"}
+    finally:
+        bdd.close()
+        
+    return response
+```
+
+---
+
+**Fonction d'insertion**
+
+La fonction d'insertion va être un peu plus complexe. L'API va devoir recevoir, en plus des informations du produit, une image correspondant au produit.
+
+Pour ce faire, on ne va pas utiliser le même encodage que précédemment. On a utilisé le JSON depuis le début, là on va utiliser multipart/form-data côté PHP. Côté API, on va utiliser UploadFile de la librairie FastAPI.
+
+Pour être honnête, entre la gestion de l'image, l'ajout éventuel d'un nouveau producteur, la vérification des insertions, etc., j'ai confié le fichier add_action.php à une IA pour faire la portabilité vers l'API. Cette partie a besoin de la librairie Pillow, on l'ajoute au fichier requirements.txt, car elle apporte des fonctionnalités de traitement et de vérification des images.
+
+**Réception des données**
+
+Contrairement aux routes précédentes, on ne peut pas simplement récupérer les informations avec un modèle Pydantic classique. En effet, on transmet ici plusieurs champs textuels ainsi qu'un fichier image dans une même requête.
+
+On utilise donc Form() pour récupérer les informations textuelles et File() pour récupérer l'image. Le paramètre image est associé à UploadFile, qui permet à FastAPI de recevoir et de manipuler le fichier envoyé.
+
+Les informations récupérées sont les suivantes :
+- product_name : nom du produit.
+- price : prix au kilo.
+- bio : indique si le produit est issu de l'agriculture biologique.
+- producteur : identifiant du producteur existant ou valeur "nouveau" si on souhaite en créer un.
+- producteur_nom, producteur_prenom et producteur_ville : informations nécessaires uniquement lorsqu'on souhaite ajouter un nouveau producteur.
+- image : fichier image transmis avec la requête. Ce paramètre est facultatif.
+
+**Gestion du producteur**
+
+On commence par vérifier si le producteur transmis existe déjà ou s'il faut en créer un nouveau.
+
+Dans le cas où la valeur de producteur est "nouveau", l'API vérifie que les informations nécessaires (nom, prénom et ville) ont bien été transmises. Elle exécute ensuite une requête SQL INSERT INTO pour ajouter le producteur dans la table Producteur.
+
+Une fois l'insertion effectuée, on récupère automatiquement son identifiant grâce à cursor.lastrowid. Cet identifiant sera utilisé pour associer le nouveau produit à son producteur.
+
+Dans le cas contraire, on considère que la valeur reçue correspond à l'identifiant d'un producteur déjà présent dans la base de données. On effectue alors une requête SELECT pour vérifier que celui-ci existe réellement avant de poursuivre.
+
+**Gestion de l'image**
+
+C'est la partie qui demande le plus de traitement. On commence par vérifier si une image a effectivement été transmise. Si c'est le cas, on récupère son contenu avec await image.read().
+
+On effectue ensuite plusieurs vérifications :
+- La taille du fichier ne doit pas dépasser 5 Mo.
+- Le fichier doit être une image valide.
+- Son format doit être autorisé : JPEG, PNG, GIF ou WEBP.
+Pour cette dernière vérification, on utilise Pillow. Cette librairie permet notamment d'ouvrir une image et de vérifier son contenu réel avec Image.open() et img.verify(). Cela évite de simplement se fier à l'extension du fichier, qui pourrait être modifiée manuellement.
+
+Une fois ces vérifications effectuées, on génère un nom de fichier à partir du nom du produit. On utilise également un identifiant aléatoire avec uuid afin d'éviter les conflits si plusieurs produits possèdent le même nom.
+
+Par exemple, un produit nommé « Pomme rouge » pourrait obtenir un fichier nommé pomme_rouge_a83f21c4.jpg.
+
+On crée ensuite le dossier de stockage s'il n'existe pas, puis on enregistre l'image avec write_bytes().
+
+Enfin, on prépare le chemin relatif de l'image, par exemple /assets/images/pomme_rouge_a83f21c4.jpg. C'est ce chemin qui sera enregistré dans la base de données, et non le fichier image lui-même.
+
+**Insertion du produit**
+
+Une fois le producteur identifié et l'image éventuellement enregistrée, on peut procéder à l'insertion du produit.
+
+On utilise une requête SQL INSERT INTO sur la table Produit, avec les informations récupérées précédemment :
+- Le nom du produit.
+- Son prix au kilo.
+- Son statut biologique.
+- L'identifiant de son producteur.
+- Le chemin de son image. 
+
+Si aucune image n'a été transmise, la valeur NULL est enregistrée dans le champ ImagePath.
+
+On récupère également l'identifiant du produit créé avec cursor.lastrowid.
+
+**Validation et gestion des erreurs**
+
+Pour terminer, on utilise bdd.commit() afin de valider les modifications effectuées dans la base de données. À l'inverse, si une erreur survient pendant les opérations SQL, on utilise bdd.rollback() pour annuler les modifications non validées.
+
+Une réponse JSON est ensuite renvoyée :
+- En cas de succès, elle contient le statut, un message de confirmation, l'identifiant du produit et le chemin de son image.
+- En cas d'erreur, elle contient un statut Error ainsi qu'un message décrivant le problème.
+Enfin, la connexion à la base de données est systématiquement fermée avec bdd.close() dans le bloc finally.
+
+**Particularité liée à Docker**
+
+Il reste un point important concernant le stockage des images. L'API et le serveur web PHP fonctionnent dans deux conteneurs Docker distincts. Si l'image est enregistrée uniquement dans le système de fichiers du conteneur de l'API, le serveur web ne pourra pas y accéder directement.
+
+Pour résoudre ce problème, on partage le dossier assets/images du serveur web avec le conteneur api_products à l'aide d'un volume Docker. Les deux conteneurs accèdent ainsi aux mêmes fichiers, chacun depuis son propre chemin interne.
+
+Cela permet à l'API de gérer l'enregistrement des images tout en laissant au serveur web la possibilité de les afficher directement.
