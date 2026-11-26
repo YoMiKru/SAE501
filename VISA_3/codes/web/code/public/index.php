@@ -38,12 +38,10 @@ curl_close($ch);
 
 $data = json_decode($response, true);
 $products = $data["products"];
-echo $data;
-echo $products;
-
 ?>
 
 <main>
+    <p> LOG Data : <?php $data ?> ; LOG products : <?php $products ?></p>
     <h2>Liste des produits</h2>
         <form id="filtre-form" method="GET">
             <label for="ville">Filtrer par ville :</label>
