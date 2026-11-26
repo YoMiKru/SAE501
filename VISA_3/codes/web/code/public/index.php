@@ -27,12 +27,22 @@ if (($_SESSION['statut'] ?? '') === 'admin') {
 }
 ?>
 
+<?php
+
+# Liste par défaut
+$ch = curl_init("http://api_product:8001/products");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$data = json_decode($response, true);
+$products = $data["products"];
+
+?>
+
 <main>
     <h2>Liste des produits</h2>
-
-    <?php if (!empty($erreurBaseDeDonnees)): ?>
-        <p role="alert">Impossible de charger les produits pour le moment. Veuillez réessayer plus tard.</p>
-    <?php else: ?>
         <form id="filtre-form" method="GET">
             <label for="ville">Filtrer par ville :</label>
             <select name="ville" id="ville" onchange="this.form.submit()">
