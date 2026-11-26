@@ -245,18 +245,17 @@ async def read_root():
     return {"Hello": "World"}
 
 @app.delete("/products/{id}")
-async def read_root(id:int):
+async def read_root(id: int):
     try:
         bdd = get_db_connection()
         with bdd.cursor() as cursor:
-            sql = f"DELETE * FROM Produit WHERE id = {id}"
-            cursor.execute(sql)
-
-        response = {"status":"Success","message":f"le produit {id} a été supprimé"}
-
+            sql = "DELETE FROM Produit WHERE NoProduit = %s"
+            cursor.execute(sql, (id,))
+        bdd.commit()
+        response = {"status": "Success", "message": f"Le produit {id} a été supprimé"}
     except Exception as e:
-        response = {"status":"Error","message":"Suppression impossible"}
+        response = {"status": "Error", "message": "Suppression impossible"}
     finally:
         bdd.close()
-        
+
     return response
