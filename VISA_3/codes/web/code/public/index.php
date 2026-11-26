@@ -30,14 +30,21 @@ if (($_SESSION['statut'] ?? '') === 'admin') {
 <?php
 
 # Liste par défaut
-$ch = curl_init("http://api_products:8001/products");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+try {
+    error_log("Initialisation des données des produits")
+    $ch = curl_init("http://api_products:8001/products");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-$response = curl_exec($ch);
-curl_close($ch);
+    $response = curl_exec($ch);
+    curl_close($ch);
 
-$data = json_decode($response, true);
-$products = $data["products"];
+    $data = json_decode($response, true);
+    $products = $data["products"];
+
+} catch(Exception $e) {
+    error_log("Appel de l'api_products échoué : $e")
+}
+
 ?>
 
 <main>
