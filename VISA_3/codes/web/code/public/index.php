@@ -1,6 +1,5 @@
-
 <?php
-session_start();
+#session_start();
 
 // Redirection si non connecté
 if (!isset($_SESSION['email'])) {
