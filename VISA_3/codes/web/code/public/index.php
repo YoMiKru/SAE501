@@ -38,6 +38,8 @@ curl_close($ch);
 
 $data = json_decode($response, true);
 $products = $data["products"];
+echo $data;
+echo $products;
 
 ?>
 
@@ -76,7 +78,7 @@ $products = $data["products"];
                 </tr>
             </thead>
             <tbody id="tableau-produits">
-                <?php foreach ($produits as $row): ?>
+                <?php foreach ($products as $row): ?>
                     <?php
                     $image = !empty($row['ImagePath'])
                         ? $row['ImagePath']
