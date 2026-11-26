@@ -798,7 +798,7 @@ La fonction d'insertion va être un peu plus complexe. L'API va devoir recevoir,
 
 Pour ce faire, on ne va pas utiliser le même encodage que précédemment. On a utilisé le JSON depuis le début, là on va utiliser multipart/form-data côté PHP. Côté API, on va utiliser UploadFile de la librairie FastAPI.
 
-Pour être honnête, entre la gestion de l'image, l'ajout éventuel d'un nouveau producteur, la vérification des insertions, etc., j'ai confié le fichier add_action.php à une IA pour faire la portabilité vers l'API. Cette partie a besoin de la librairie Pillow, on l'ajoute au fichier requirements.txt, car elle apporte des fonctionnalités de traitement et de vérification des images.
+Pour être honnête, entre la gestion de l'image, l'ajout éventuel d'un nouveau producteur, la vérification des insertions, etc., j'ai confié le fichier add_action.php à une IA pour faire la portabilité vers l'API. Cette partie a besoin de la librairie Pillow, on l'ajoute au fichier requirements.txt, car elle apporte des fonctionnalités de traitement et de vérification des images. Et également la librairie python-mulitpart. 
 
 **Réception des données**
 

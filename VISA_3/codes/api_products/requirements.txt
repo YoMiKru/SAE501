@@ -3,3 +3,4 @@ uvicorn
 pymysql
 pydantic
 pillow
+python-multipart
