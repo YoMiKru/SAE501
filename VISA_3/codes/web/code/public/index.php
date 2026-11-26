@@ -97,7 +97,6 @@ $products = $data["products"];
                 <?php endforeach; ?>
             </tbody>
         </table>
-    <?php endif; ?>
 </main>
 
 <?php include '/var/www/src/includes/footer.php'; ?>
