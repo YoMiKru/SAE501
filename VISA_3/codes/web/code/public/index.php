@@ -144,7 +144,7 @@ $filteredProducts = array_filter($products, function ($product) use ($ville, $bi
                              alt="<?= htmlspecialchars($row['ProduitNom'] ?? 'Image du produit', ENT_QUOTES, 'UTF-8') ?>"
                              width="100">
                     </td>                    
-                    <td><?= htmlspecialchars($row['Prenom'] ?? '', $row['Producteur.Nom'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                    <td><?= htmlspecialchars(($row['Prenom'] ?? '') . ' ' . ($row['Producteur.Nom'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
                     <td><?= htmlspecialchars($row['Ville'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                 </tr>
             <?php endforeach; ?>
