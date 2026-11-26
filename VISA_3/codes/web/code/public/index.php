@@ -76,7 +76,7 @@ $products = $data["products"];
                 </tr>
             </thead>
             <tbody id="tableau-produits">
-                <?php foreach ($produits as $row): ?>
+                <?php foreach ($products as $row): ?>
                     <?php
                     $image = !empty($row['ImagePath'])
                         ? $row['ImagePath']
