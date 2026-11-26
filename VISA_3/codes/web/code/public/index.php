@@ -6,34 +6,6 @@ if (!isset($_SESSION['email'])) {
     header("Location: /pages/login.php");
     exit();
 }
-
-// Connexion centralisée à MariaDB
-require_once '/var/www/src/includes/database.php';
-
-try {
-    $db = getDatabase();
-
-    $query = "
-        SELECT
-            Produit.Nom AS ProduitNom,
-            Produit.PrixKilo,
-            Produit.Bio,
-            Produit.ImagePath,
-            Producteur.Nom AS ProdNom,
-            Producteur.Prenom,
-            Producteur.Ville
-        FROM Produit
-        JOIN Producteur ON Produit.NoProducteur = Producteur.NoProducteur
-    ";
-
-    $stmt = $db->query($query);
-    $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    error_log('Erreur de récupération des produits : ' . $e->getMessage());
-    http_response_code(500);
-    $erreurBaseDeDonnees = true;
-    $produits = [];
-}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -61,13 +33,24 @@ if (($_SESSION['statut'] ?? '') === 'admin') {
     <?php if (!empty($erreurBaseDeDonnees)): ?>
         <p role="alert">Impossible de charger les produits pour le moment. Veuillez réessayer plus tard.</p>
     <?php else: ?>
-        <form id="filtre-form">
+        <form id="filtre-form" method="GET">
             <label for="ville">Filtrer par ville :</label>
-            <select name="ville" id="ville">
-                <option value="">-- Toutes --</option>
-                <option value="Lannion">Lannion</option>
-                <option value="Brest">Brest</option>
-                <option value="Rennes">Rennes</option>
+            <select name="ville" id="ville" onchange="this.form.submit()">
+                <option value="*">-- Toutes --</option>
+
+                <?php foreach ($villes as $ville): ?>
+                    <option value="<?= htmlspecialchars($ville) ?>"
+                        <?= ($_GET['ville'] ?? '*') === $ville ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($ville) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <label for="bio">Filtrer par agriculture biologique :</label>
+            <select name="bio" id="bio" onchange="this.form.submit()">
+                <option value="*" <?= ($_GET['bio'] ?? '*') === '*' ? 'selected' : '' ?>>Tous</option>
+                <option value="1" <?= ($_GET['bio'] ?? '') === '1' ? 'selected' : '' ?>>Bio</option>
+                <option value="0" <?= ($_GET['bio'] ?? '') === '0' ? 'selected' : '' ?>>Non bio</option>
             </select>
         </form>
 

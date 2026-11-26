@@ -2,7 +2,7 @@
 
 ## Développer et déployer un microservice dans un environnement virtualisé
 
-<span style="font-size: 1.6em; color: gray;"><em>Compte rendu — VISA_2</em></span>
+<span style="font-size: 1.6em; color: gray;"><em>Compte rendu — VISA_3</em></span>
 
 ## Contexte
 
@@ -10,15 +10,15 @@ Le VISA_3 reprend le projet préparé lors du VISA_2. Cette version consiste à 
 
 Pour rappel, l'acronime **CRUD** désigne **CREATE** (Créer), **READ** (Lire), **UPDATE** (Mettre à jour) et **DELETE** (Supprimer). 
 
-Pour se faire, on va utiliser la librairie Python FastAPI qui, comme son nom l'indique, de créer rapidement une API. 
+Pour se faire, on va utiliser la librairie Python FastAPI qui, comme son nom l'indique, permet de créer rapidement une API. 
 
 ## Partie III : Mise en place d'une API CRUD en Python
 
 Avant de directement adapter les opérations CRUD et de migrer tout le système, on va créer deux nouveaux services : api_auth et api_products. 
 
-Le premier va nous servir de gérer l'authentification et le second pour l'ajout, la lecture,  modification et la suprression de données dans le tableau avec les produits. 
+Le premier va nous servir de gérer l'authentification et le second pour l'ajout, la lecture,  modification et la suprression de données dans le tableau Produits. 
 
-Cette séparations permet de conserver une architecture propre : chaque tableau à sa propre API et permet également d'une meilleure sécurisation puisque les API sont indépendantes de chacun.
+Cette séparations permet de conserver une architecture propre, chaque tableau à sa propre API. Cela permet également d'une meilleure sécurisation puisque les API sont indépendantes de chacun.
 
 ### III.1. Création des services API à vide
 
@@ -90,7 +90,7 @@ Maintenant que la configuration du Dockerfile a été fait, on va ajouter les de
 >
 >Sans Docker Compose, il faudrait exécuter manuellement les différentes commandes docker build, docker run et configurer individuellement les réseaux, volumes, variables d'environnement et dépendances entre conteneurs.
 >
->Avec Docker Compose, toute cette configuration est déclarée dans un seul fichier YAML. Il devient alors possible de démarrer ou d'arrêter l'ensemble des services avec une simple commande (docker compose up -d ou docker compose down).
+>Avec Docker Compose, toute cette configuration est déclarée dans un seul fichier YAML. Il devient alors possible de démarrer ou d'arrêter l'ensemble des services avec une simple commande (``docker compose up -d`` ou ``docker compose down``).
 >
 >Cela facilite le déploiement, la maintenance et la reproductibilité de l'environnement, tout en garantissant une configuration cohérente entre les différents services.
 
@@ -655,7 +655,7 @@ async def read_root(ville: str = "*"):
                 ON Produit.NoProducteur = Producteur.NoProducteur
             """
 
-            if ville != "*":
+            if ville != "*": # A revoir, le code PHP ne 
                 sql += " WHERE Producteur.Ville = %s"
                 cursor.execute(sql, (ville,))
             else:
@@ -678,3 +678,48 @@ async def read_root(ville: str = "*"):
 ```
 
 Ce code renvoie un dictionnaire JSON contenant le statut de la requête et la liste des produits récupérés depuis la base de données. Si une ville spécifique est fournie, seuls les produits de cette ville seront renvoyés. Sinon, tous les produits seront listés.
+
+Le code PHP de la page index.php est également à revoir. Actuellement, la sélection des villes disponibles est statique, il faut modifier le code pour que les choix de la sélection des villes soit fait dynamiquement. 
+
+BONUS : On peut ajouter le filtre BIO. 
+
+On passe de ce formulaire : 
+
+```html
+<form id="filtre-form">
+    <label for="ville">Filtrer par ville :</label>
+    <select name="ville" id="ville">
+        <option value="">-- Toutes --</option>
+        <option value="Lannion">Lannion</option>
+        <option value="Brest">Brest</option>
+        <option value="Rennes">Rennes</option>
+    </select>
+</form>
+```
+
+A ce formulaire : 
+
+```html
+<form id="filtre-form" method="GET">
+    <label for="ville">Filtrer par ville :</label>
+    <select name="ville" id="ville" onchange="this.form.submit()">
+        <option value="*">-- Toutes --</option>
+
+        <?php foreach ($villes as $ville): ?>
+            <option value="<?= htmlspecialchars($ville) ?>"
+                <?= ($_GET['ville'] ?? '*') === $ville ? 'selected' : '' ?>>
+                <?= htmlspecialchars($ville) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+
+    <label for="bio">Filtrer par agriculture biologique :</label>
+    <select name="bio" id="bio" onchange="this.form.submit()">
+        <option value="*" <?= ($_GET['bio'] ?? '*') === '*' ? 'selected' : '' ?>>Tous</option>
+        <option value="1" <?= ($_GET['bio'] ?? '') === '1' ? 'selected' : '' ?>>Bio</option>
+        <option value="0" <?= ($_GET['bio'] ?? '') === '0' ? 'selected' : '' ?>>Non bio</option>
+    </select>
+</form>
+```
+
+Dans index.php, on peut également supprimer la partie du code qui se connecte à la base de données pour récupérer les produits. On va désormais utiliser l'API pour récupérer les produits.
