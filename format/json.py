@@ -17,3 +17,19 @@ def fix_json(bad_json: str) -> str:
     return bad_json
 
 print(fix_json(bad_json))
+
+
+
+{ "status" :"Success",
+"products" :[    
+            {"NoProduit":2,
+                    
+            "Nom":"miel",
+                     "NoProducteur":1,
+                     "PrixKilo":6.0,
+                     "Bio":1,
+                     "ImagePath":"/assets/images/miel.webp",
+                     "Producteur.NoProducteur":1,
+                     "Producteur.Nom":"René",
+                     "Prenom":"Minodier",
+                     "Ville":"Arlebosc"},{"NoProduit":3,"Nom":"baguette","NoProducteur":2,"PrixKilo":1.0,"Bio":0,"ImagePath":"/assets/images/baguette.webp","Producteur.NoProducteur":2,"Producteur.Nom":"Mairie","Prenom":"Blachère","Ville":"Lannion"},{"NoProduit":4,"Nom":"pomme","NoProducteur":3,"PrixKilo":2.0,"Bio":1,"ImagePath":"/assets/images/pomme.webp","Producteur.NoProducteur":3,"Producteur.Nom":"Alain","Prenom":"Pierre","Ville":"Grenobles"},{"NoProduit":5,"Nom":"baignet","NoProducteur":2,"PrixKilo":10.0,"Bio":0,"ImagePath":"/assets/images/baignet.webp","Producteur.NoProducteur":2,"Producteur.Nom":"Mairie","Prenom":"Blachère","Ville":"Lannion"},{"NoProduit":6,"Nom":"patate","NoProducteur":1,"PrixKilo":3.0,"Bio":1,"ImagePath":"/assets/images/patate.webp","Producteur.NoProducteur":1,"Producteur.Nom":"René","Prenom":"Minodier","Ville":"Arlebosc"},{"NoProduit":7,"Nom":"poireaux","NoProducteur":1,"PrixKilo":6.0,"Bio":1,"ImagePath":"/assets/images/poireaux.webp","Producteur.NoProducteur":1,"Producteur.Nom":"René","Prenom":"Minodier","Ville":"Arlebosc"},{"NoProduit":8,"Nom":"chocolatine","NoProducteur":2,"PrixKilo":4.0,"Bio":1,"ImagePath":"/assets/images/chocolatine.webp","Producteur.NoProducteur":2,"Producteur.Nom":"Mairie","Prenom":"Blachère","Ville":"Lannion"},{"NoProduit":9,"Nom":"croissant","NoProducteur":2,"PrixKilo":3.0,"Bio":0,"ImagePath":"/assets/images/croissant.webp","Producteur.NoProducteur":2,"Producteur.Nom":"Mairie","Prenom":"Blachère","Ville":"Lannion"},{"NoProduit":10,"Nom":"confiture_fraise","NoProducteur":3,"PrixKilo":3.0,"Bio":0,"ImagePath":"/assets/images/confiture_fraise.webp","Producteur.NoProducteur":3,"Producteur.Nom":"Alain","Prenom":"Pierre","Ville":"Grenobles"}] }
