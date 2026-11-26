@@ -30,7 +30,7 @@ if (($_SESSION['statut'] ?? '') === 'admin') {
 <?php
 
 # Liste par défaut
-$ch = curl_init("http://api_product:8001/products");
+$ch = curl_init("http://api_products:8001/products");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 $response = curl_exec($ch);
